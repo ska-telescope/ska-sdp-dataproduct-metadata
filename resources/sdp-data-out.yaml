@@ -1,0 +1,20 @@
+config:
+  cmdline: null
+  commit: null
+  image: null
+  processing_block: pb_testing
+  processing_script: processing/testing
+  version: null
+context:
+  intent: null
+  notes: null
+  observer: null
+execution_block: testing
+files:
+- description: visibilities
+  path: visbility.ms
+  status: working
+- desciption: more visbilities
+  path: another.ms
+  status: working
+interface: http://schema.skao.int/ska-data-product-meta/0.1

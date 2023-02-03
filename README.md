@@ -1,4 +1,4 @@
-# ska-sdp-dataproduct-metadata
+# SKA SDP Data Product Metadata
 
 
 
