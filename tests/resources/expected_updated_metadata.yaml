@@ -1,0 +1,20 @@
+interface: http://schema.skao.int/ska-data-product-meta/0.1
+execution_block: eb-test-20220916-00000
+context:
+  observer: null
+  intent: null
+  notes: null
+config:
+  processing_block: pb-test-20220916-00000
+  processing_script: vis-receive
+  image: null
+  version: null
+  cmdline: null
+  commit: null
+files:
+- description: raw visibilities
+  path: vis.ms
+  status: done
+- description: extra visibilities
+  path: vis_new.ms
+  status: working

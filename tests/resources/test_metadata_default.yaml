@@ -1,14 +1,14 @@
 interface: http://schema.skao.int/ska-data-product-meta/0.1
-execution_block: None
+execution_block: null
 context:
-  observer: None
-  intent: None
-  notes: None
+  observer: null
+  intent: null
+  notes: null
 config:
-  processing_block: None
-  processing_script: None
-  image: None
-  version: None
-  cmdline: None
-  commit: None
+  processing_block: null
+  processing_script: null
+  image: null
+  version: null
+  cmdline: null
+  commit: null
 files: []

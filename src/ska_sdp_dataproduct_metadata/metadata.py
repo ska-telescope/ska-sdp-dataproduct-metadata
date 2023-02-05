@@ -16,7 +16,22 @@ METADATA_TEMPLATE = "resources/metadata_defaults.yaml"
 
 
 class MetaData:
-    """."""
+    """
+    Class for creating the metadata file
+
+    :param interface: Interface for giving the schema
+    :param execution_block: execution block ID
+    :param processing_block: processing block ID
+    :param processing_script: processing script used
+    :param observer: Obsever, data provided by OET (optional)
+    :param intent :intent, data provided by OET (optional)
+    :param notes: Additional notes, data provided by OET (optional)
+    :param cmdline: command that is being used (optional)
+    :param commit: commit hash (optional)
+    :param image: Image of the processing script
+    :param version: version of the image
+    :param path_list: path of Measurement files (MS) that is being created
+    """
 
     def __init__(
         self,
@@ -35,23 +50,10 @@ class MetaData:
         path_list=None,
         output_path=None,
     ):
-        """
 
-        @param interface:
-        @param execution_block:
-        @param processing_block:
-        @param processing_script:
-        @param observer:
-        @param intent:
-        @param notes:
-        @param cmdline:
-        @param commit:
-        @param image:
-        @param version:
-        @param path_list:
-        """
-        # Read the metadata default template
+        # Read the input metadata template
         if input_file is None:
+            # Using the default template
             self._data = self.read(METADATA_TEMPLATE)
         else:
             self._data = self.read(input_file)
@@ -74,7 +76,7 @@ class MetaData:
         """Create metadata file."""
 
         # Update interface and eb values
-        # Interface needs to be added, this is just a placeholder
+        # Interface needs to be added from ska_telmodel
         if self._interface:
             LOG.debug("Interface -  %s", self._interface)
             self._data["interface"] = self._interface
@@ -84,56 +86,68 @@ class MetaData:
 
         self._data["execution_block"] = self._eb_id
 
-        # Identifies the observation
+        # Updated all the relevant section of the metadata
         self.set_context()
         self.set_config()
         self.set_files()
         self.write(data=self._data)
 
-        return self._data
+    def update_status(self, input_metadata, path, status):
+        """Update the current file status.
 
-    def update_status(self, filename, path, status):
-        """Update the current file status."""
+        :param input_metadata: metadata that needs status updated
+        :param: path: path to the file
+        :param: status: status to be updated to
 
-        data = self.read(filename)
+        """
 
+        data = self.read(input_metadata)
         for file in data["files"]:
             if file["path"] == path:
                 file["status"] = status
 
-        self.write(filename=filename, data=data)
+        self.write(file_path=input_metadata, data=data)
 
     def read(self, file):
-        """."""
+        """
+        Read input metatada file and load in yaml
+
+        :param file: input metadata file
+
+        :returns: Returns the yaml loaded metadata file
+
+        """
         with open(file, "r", encoding="utf8") as input_file:
             data = yaml.safe_load(input_file)
-        print(data)
         return data
 
-    def write(self, filename=None, data=None):
+    def write(self, file_path=None, data=None):
         """Write the metadata to a yaml file.
-        @param output_path: output path for the metadata file
-        @param data: metadata that needs to be written to file
+
+        :param file_path: output path for the metadata file
+        :param data: metadata that needs to be written to file
 
         """
 
-        if filename is None:
+        if file_path is None:
             output_path = self._output_path
         else:
-            output_path = filename
+            output_path = file_path
 
         # Write YAML file
         with open(output_path, "w", encoding="utf8") as out_file:
             yaml.safe_dump(data, out_file, default_flow_style=False)
 
     def set_context(self):
-        """Set context for free-form data provided by OET.
+        """
+        Set context for free-form data provided by OET.
         Note. This is currently left empty until we know where to get
         the data from
 
-        @param observer:
-        @param intent:
-        @param notes:
+        :param observer: observer name
+        :param intent: intent of the use
+        :param notes: additional notes
+
         """
         context_data = self._data["context"]
         context_data["observer"] = self._observer
@@ -159,14 +173,15 @@ class MetaData:
         config_data["commit"] = self._commit
 
     def set_files(self):
-        """Set path to files and add current file status.
+        """
+        Set path to files and add current file status.
 
-        @param path_lists: List of path and description
+        :param path_lists: List of path and description
+
         """
 
         files_list = []
         if self._path_list:
-            print(self._path_list)
             for path_list in self._path_list:
                 path_list["status"] = "working"
                 files_list.append(path_list)
