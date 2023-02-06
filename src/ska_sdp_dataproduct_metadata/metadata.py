@@ -24,12 +24,13 @@ class MetaData:
     :param processing_block: processing block ID
     :param processing_script: processing script used
     :param observer: Obsever, data provided by OET (optional)
-    :param intent :intent, data provided by OET (optional)
+    :param intent: intent, data provided by OET (optional)
     :param notes: Additional notes, data provided by OET (optional)
     :param cmdline: command that is being used (optional)
     :param commit: commit hash (optional)
     :param image: Image of the processing script
     :param version: version of the image
+
     """
 
     def __init__(
@@ -86,7 +87,8 @@ class MetaData:
         self.write()
 
     def update_file_status(self, ms_name, status):
-        """Update the current file status.
+        """
+        Update the current file status.
 
         :param: ms_name: Measurement set file name
         :param: status: status to be updated to
@@ -162,7 +164,6 @@ class MetaData:
         Read input metatada file and load in yaml
 
         :param file: input metadata file
-
         :returns: Returns the yaml loaded metadata file
 
         """
