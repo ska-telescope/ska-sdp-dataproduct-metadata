@@ -3,52 +3,39 @@
 # pylint: disable=too-many-instance-attributes
 
 import logging
+import os
 
 import ska_ser_logging
 import yaml
 
+from .config import new_config_client
+
 # Initialise logging
 ska_ser_logging.configure_logging()
-LOG = logging.getLogger("ska_sdp_scripting")
-LOG.setLevel(logging.DEBUG)
+LOG = logging.getLogger("ska_sdp_dataproduct_metadata")
+LOG.setLevel(logging.INFO)
 
 METADATA_TEMPLATE = "resources/metadata_defaults.yaml"
 
 
 class MetaData:
     """
-    Class for creating the metadata file
-
-    :param interface: Interface for giving the schema
-    :param execution_block: execution block ID
-    :param processing_block: processing block ID
-    :param processing_script: processing script used
-    :param observer: Obsever, data provided by OET (optional)
-    :param intent: intent, data provided by OET (optional)
-    :param notes: Additional notes, data provided by OET (optional)
-    :param cmdline: command that is being used (optional)
-    :param commit: commit hash (optional)
-    :param image: Image of the processing script
-    :param version: version of the image
+    Class for generating the metadata file
 
     """
 
-    def __init__(
-        self,
-        input_file=None,
-        interface=None,
-        eb_id=None,
-        pb_id=None,
-        processing_script=None,
-        observer=None,
-        intent=None,
-        notes=None,
-        cmdline=None,
-        commit=None,
-        image=None,
-        version=None,
-        output_path=None,
-    ):
+    def __init__(self, pb_id=None):
+
+        # Get connection to config DB
+        LOG.info("Opening connection to config DB")
+        self._config = new_config_client()
+
+        # Processing block ID
+        if pb_id is None:
+            self._pb_id = os.getenv("SDP_PB_ID")
+        else:
+            self._pb_id = pb_id
+        LOG.debug("Processing Block ID %s", self._pb_id)
 
         # Read the input metadata template
         if input_file is None:
@@ -57,18 +44,18 @@ class MetaData:
         else:
             self._data = self.read(input_file)
 
-        self._interface = interface
-        self._eb_id = eb_id
-        self._pb_id = pb_id
-        self._processing_script = processing_script
-        self._observer = observer
-        self._intent = intent
-        self._notes = notes
-        self._cmdline = cmdline
-        self._commit = commit
-        self._image = image
-        self._version = version
-        self._output_path = output_path
+        # self._interface = interface
+        # self._eb_id = eb_id
+        # self._pb_id = pb_id
+        # self._processing_script = processing_script
+        # self._observer = observer
+        # self._intent = intent
+        # self._notes = notes
+        # self._cmdline = cmdline
+        # self._commit = commit
+        # self._image = image
+        # self._version = version
+        # self._output_path = output_path
 
         # Update interface and eb values
         # Interface needs to be added from ska_telmodel

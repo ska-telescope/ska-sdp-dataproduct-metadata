@@ -1,6 +1,6 @@
-"""SDP Scripting Library."""
+"""SDP Data Product Metadata."""
 
+from .config import new_config_client
 from .metadata import MetaData
-from .version import __version__
 
-__all__ = ["__version__", "MetaData"]
+__all__ = ["MetaData", "new_config_client"]

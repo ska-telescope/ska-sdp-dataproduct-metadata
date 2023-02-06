@@ -40,7 +40,7 @@ def setup(app):
 
 # -- Project information -----------------------------------------------------
 project = "SDP Data Product Metadata"
-copyright = "2019-2021, SKA SDP Developers"
+copyright = "2023, SKA SDP Developers"
 author = "SKA SDP Developers"
 
 
@@ -49,9 +49,9 @@ author = "SKA SDP Developers"
 # built documents.
 #
 # The short X.Y.Z version.
-version = "0.1.0"
+version = "0.0.0"
 # The full version, including alpha/beta/rc pre-release tags.
-release = "0.1.0"
+release = "0.0.0"
 
 # -- General configuration ------------------------------------------------
 

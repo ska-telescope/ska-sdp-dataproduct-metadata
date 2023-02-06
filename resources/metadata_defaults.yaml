@@ -1,7 +1,7 @@
 interface: http://schema.skao.int/ska-data-product-meta/0.1
 execution_block: null
 
- # Free-form data provided by OET.
+# Free-form data provided by OET.
 context:
   observer: null
   intent: null
