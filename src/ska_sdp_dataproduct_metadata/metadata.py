@@ -30,7 +30,6 @@ class MetaData:
     :param commit: commit hash (optional)
     :param image: Image of the processing script
     :param version: version of the image
-    :param path_list: path of Measurement files (MS) that is being created
     """
 
     def __init__(
@@ -47,7 +46,6 @@ class MetaData:
         commit=None,
         image=None,
         version=None,
-        path_list=None,
         output_path=None,
     ):
 
@@ -69,11 +67,7 @@ class MetaData:
         self._commit = commit
         self._image = image
         self._version = version
-        self._path_list = path_list
         self._output_path = output_path
-
-    def create(self):
-        """Create metadata file."""
 
         # Update interface and eb values
         # Interface needs to be added from ska_telmodel
@@ -89,54 +83,21 @@ class MetaData:
         # Updated all the relevant section of the metadata
         self.set_context()
         self.set_config()
-        self.set_files()
-        self.write(data=self._data)
+        self.write()
 
-    def update_status(self, input_metadata, path, status):
+    def update_file_status(self, ms_name, status):
         """Update the current file status.
 
-        :param input_metadata: metadata that needs status updated
-        :param: path: path to the file
+        :param: ms_name: Measurement set file name
         :param: status: status to be updated to
 
         """
 
-        data = self.read(input_metadata)
-        for file in data["files"]:
-            if file["path"] == path:
+        for file in self._data["files"]:
+            if ms_name in file["path"]:
                 file["status"] = status
 
-        self.write(file_path=input_metadata, data=data)
-
-    def read(self, file):
-        """
-        Read input metatada file and load in yaml
-
-        :param file: input metadata file
-
-        :returns: Returns the yaml loaded metadata file
-
-        """
-        with open(file, "r", encoding="utf8") as input_file:
-            data = yaml.safe_load(input_file)
-        return data
-
-    def write(self, file_path=None, data=None):
-        """Write the metadata to a yaml file.
-
-        :param file_path: output path for the metadata file
-        :param data: metadata that needs to be written to file
-
-        """
-
-        if file_path is None:
-            output_path = self._output_path
-        else:
-            output_path = file_path
-
-        # Write YAML file
-        with open(output_path, "w", encoding="utf8") as out_file:
-            yaml.safe_dump(data, out_file, default_flow_style=False)
+        self.write()
 
     def set_context(self):
         """
@@ -172,7 +133,7 @@ class MetaData:
         config_data["cmdline"] = self._cmdline
         config_data["commit"] = self._commit
 
-    def set_files(self):
+    def add_path_to_files(self, path_lists=None):
         """
         Set path to files and add current file status.
 
@@ -181,10 +142,37 @@ class MetaData:
         """
 
         files_list = []
-        if self._path_list:
-            for path_list in self._path_list:
+        if path_lists:
+            for path_list in path_lists:
+                ms_name = path_list["path"]
+                file_path = (
+                    f"/product/{self._eb_id}/ska-sdp/{self._pb_id}/{ms_name}"
+                )
+                path_list["path"] = file_path
                 path_list["status"] = "working"
                 files_list.append(path_list)
             self._data["files"] = files_list
         else:
-            LOG.debug("Path list is empty!")
+            raise ValueError("Path list is empty!")
+
+        self.write()
+
+    def read(self, file):
+        """
+        Read input metatada file and load in yaml
+
+        :param file: input metadata file
+
+        :returns: Returns the yaml loaded metadata file
+
+        """
+        with open(file, "r", encoding="utf8") as input_file:
+            data = yaml.safe_load(input_file)
+        return data
+
+    def write(self):
+        """Write the metadata to a yaml file."""
+
+        # Write YAML file
+        with open(self._output_path, "w", encoding="utf8") as out_file:
+            yaml.safe_dump(self._data, out_file, default_flow_style=False)

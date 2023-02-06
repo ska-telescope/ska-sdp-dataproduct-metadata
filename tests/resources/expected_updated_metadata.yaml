@@ -13,8 +13,8 @@ config:
   commit: null
 files:
 - description: raw visibilities
-  path: vis.ms
+  path: /product/eb-test-20220916-00000/ska-sdp/pb-test-20220916-00000/vis.ms
   status: done
 - description: extra visibilities
-  path: vis_new.ms
+  path: /product/eb-test-20220916-00000/ska-sdp/pb-test-20220916-00000/vis_new.ms
   status: working

@@ -1,0 +1,14 @@
+config:
+  cmdline: null
+  commit: null
+  image: null
+  processing_block: pb-test-20220916-00000
+  processing_script: vis-receive
+  version: null
+context:
+  intent: null
+  notes: null
+  observer: null
+execution_block: eb-test-20220916-00000
+files: []
+interface: http://schema.skao.int/ska-data-product-meta/0.1
