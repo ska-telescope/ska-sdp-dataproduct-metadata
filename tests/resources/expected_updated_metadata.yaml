@@ -1,20 +1,14 @@
-interface: http://schema.skao.int/ska-data-product-meta/0.1
-execution_block: eb-test-20220916-00000
-context:
-  observer: null
-  intent: null
-  notes: null
 config:
-  processing_block: pb-test-20220916-00000
-  processing_script: vis-receive
-  image: null
-  version: null
   cmdline: null
   commit: null
+  image: artefact.skao.int/ska-sdp-script-vis-receive
+  processing_block: pb-test-20200425-00000
+  processing_script: vis-receive
+  version: 0.6.0
+context: {}
+execution_block: eb-test-20200325-00001
 files:
 - description: raw visibilities
-  path: /product/eb-test-20220916-00000/ska-sdp/pb-test-20220916-00000/vis.ms
+  path: tests/resources/product/eb-test-20200325-00001/ska-sdp/pb-test-20200425-00000/vis.ms
   status: done
-- description: extra visibilities
-  path: /product/eb-test-20220916-00000/ska-sdp/pb-test-20220916-00000/vis_new.ms
-  status: working
+interface: http://schema.skao.int/ska-data-product-meta/0.1

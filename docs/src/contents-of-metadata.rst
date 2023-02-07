@@ -1,12 +1,5 @@
-Introduction
-============
-
-The SDP Data Product Metadata is a python package that generates Measurement Set (MS) metadata. This package
-helps to ensure the data products are written with the appropriate metadata.
-
-
 Contents of Metadata file
--------------------------
+=========================
 
 Below shows the contents of the metadata and brief description about them:
 

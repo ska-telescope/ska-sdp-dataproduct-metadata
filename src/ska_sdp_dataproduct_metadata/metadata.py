@@ -1,6 +1,4 @@
 """Generating Metadata File."""
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-instance-attributes
 
 import logging
 import os
@@ -15,136 +13,123 @@ ska_ser_logging.configure_logging()
 LOG = logging.getLogger("ska_sdp_dataproduct_metadata")
 LOG.setLevel(logging.INFO)
 
-METADATA_TEMPLATE = "resources/metadata_defaults.yaml"
+METADATA_TEMPLATE = "metadata_defaults.yaml"
+METADATA_FILENAME = "ska-data-product.yaml"
 
 
 class MetaData:
     """
     Class for generating the metadata file
 
+    :param pb_id: processing block ID
+    :type mount_path: path where the data product volume is mounted.
+
     """
 
-    def __init__(self, pb_id=None):
+    def __init__(self, pb_id=None, mount_path=None):
 
         # Get connection to config DB
         LOG.info("Opening connection to config DB")
         self._config = new_config_client()
+
+        # # Read metadata template
+        metadata_template_path = os.path.join(
+            os.path.dirname(__file__), "template", METADATA_TEMPLATE
+        )
+        self._data = self.read(metadata_template_path)
 
         # Processing block ID
         if pb_id is None:
             self._pb_id = os.getenv("SDP_PB_ID")
         else:
             self._pb_id = pb_id
-        LOG.debug("Processing Block ID %s", self._pb_id)
+        LOG.info("Processing Block ID %s", self._pb_id)
 
-        # Read the input metadata template
-        if input_file is None:
-            # Using the default template
-            self._data = self.read(METADATA_TEMPLATE)
-        else:
-            self._data = self.read(input_file)
+        # Get processing Block, eb_id and deployment from config DB
+        self._pb = None
+        self._eb_id = None
+        self._deployment = None
+        for txn in self._config.txn():
+            self._pb = txn.get_processing_block(self._pb_id)
 
-        # self._interface = interface
-        # self._eb_id = eb_id
-        # self._pb_id = pb_id
-        # self._processing_script = processing_script
-        # self._observer = observer
-        # self._intent = intent
-        # self._notes = notes
-        # self._cmdline = cmdline
-        # self._commit = commit
-        # self._image = image
-        # self._version = version
-        # self._output_path = output_path
+            if self._pb is None:
+                raise ValueError("Processing Block is None!")
 
-        # Update interface and eb values
-        # Interface needs to be added from ska_telmodel
-        if self._interface:
-            LOG.debug("Interface -  %s", self._interface)
-            self._data["interface"] = self._interface
+            self._eb_id = self._pb.eb_id
+            LOG.info("Execution Block ID %s", self._eb_id)
 
-        if self._eb_id is None:
-            raise ValueError("Execution Block ID is None!")
+            if self._eb_id:
+                execution_block = txn.get_execution_block(self._eb_id)
+                self._data["execution_block"] = self._eb_id
 
-        self._data["execution_block"] = self._eb_id
+            for deploy_id in txn.list_deployments():
+                if self._pb_id in deploy_id:
+                    self._deployment = txn.get_deployment(deploy_id)
 
-        # Updated all the relevant section of the metadata
-        self.set_context()
+            if self._deployment is None:
+                raise ValueError("Deployment is None!")
+
+        # Update context
+        if self._eb_id:
+            self._data["context"] = execution_block["context"]
+
+        # Update config
         self.set_config()
+
+        # Construct the path to write metadata
+        if mount_path is None:
+            self._data_product_path = (
+                f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
+            )
+        else:
+            self._data_product_path = (
+                f"{mount_path}/product/{self._eb_id}/ska-sdp/{self._pb_id}"
+            )
+
+        # Write the initial version of metadata file
         self.write()
-
-    def update_file_status(self, ms_name, status):
-        """
-        Update the current file status.
-
-        :param: ms_name: Measurement set file name
-        :param: status: status to be updated to
-
-        """
-
-        for file in self._data["files"]:
-            if ms_name in file["path"]:
-                file["status"] = status
-
-        self.write()
-
-    def set_context(self):
-        """
-        Set context for free-form data provided by OET.
-        Note. This is currently left empty until we know where to get
-        the data from
-
-        :param observer: observer name
-        :param intent: intent of the use
-        :param notes: additional notes
-
-        """
-        context_data = self._data["context"]
-        context_data["observer"] = self._observer
-        context_data["intent"] = self._intent
-        context_data["notes"] = self._notes
 
     def set_config(self):
         """Set configuration of generating software."""
 
+        # Get script from processing block
+        script = self._pb.script
+
         config_data = self._data["config"]
-
-        if self._pb_id is None:
-            raise ValueError("Processing Block ID is None!")
         config_data["processing_block"] = self._pb_id
+        config_data["processing_script"] = script["name"]
+        config_data["image"] = self._deployment.args["chart"]
+        config_data["version"] = script["version"]
 
-        if self._processing_script is None:
-            raise ValueError("Processing Script is None!")
-        config_data["processing_script"] = self._processing_script
-
-        config_data["image"] = self._image
-        config_data["version"] = self._version
-        config_data["cmdline"] = self._cmdline
-        config_data["commit"] = self._commit
-
-    def add_path_to_files(self, path_lists=None):
+    def new_files(self, path=None, description=None):
         """
-        Set path to files and add current file status.
+        Creates new files into the metadata and add current file status.
 
-        :param path_lists: List of path and description
+        :param path: file name of the data product
+        :param description: Description of the file
+        :returns: instance of the File class
 
         """
 
-        files_list = []
-        if path_lists:
-            for path_list in path_lists:
-                ms_name = path_list["path"]
-                file_path = (
-                    f"/product/{self._eb_id}/ska-sdp/{self._pb_id}/{ms_name}"
-                )
-                path_list["path"] = file_path
-                path_list["status"] = "working"
-                files_list.append(path_list)
-            self._data["files"] = files_list
-        else:
-            raise ValueError("Path list is empty!")
+        full_path = f"{self._data_product_path}/{path}"
 
+        for file in self._data["files"]:
+            if full_path in file["path"]:
+                raise ValueError("File with same path already exists!")
+
+        add_to_file = [
+            {
+                "path": full_path,
+                "description": description,
+                "status": "working",
+            }
+        ]
+        self._data["files"].extend(add_to_file)
         self.write()
+
+        # Instance of the class to represent the file
+        file = File(full_path, self._data_product_path)
+        return file
 
     def read(self, file):
         """
@@ -161,6 +146,55 @@ class MetaData:
     def write(self):
         """Write the metadata to a yaml file."""
 
+        # Check if directories exist, if not create
+        if not os.path.exists(self._data_product_path):
+            os.makedirs(self._data_product_path)
+
+        metadata_file_path = f"{self._data_product_path}/{METADATA_FILENAME}"
+
         # Write YAML file
-        with open(self._output_path, "w", encoding="utf8") as out_file:
+        with open(metadata_file_path, "w", encoding="utf8") as out_file:
             yaml.safe_dump(self._data, out_file, default_flow_style=False)
+
+
+class File:
+    """Class to represent the file in the metadata."""
+
+    def __init__(self, full_path, data_product_path):
+
+        # Full path to the file and metadata file
+        self._full_path = full_path
+        self._metadata_file_path = f"{data_product_path}/{METADATA_FILENAME}"
+
+    @property
+    def full_path(self):
+        """Get the full path object."""
+        return self._full_path
+
+    @property
+    def metadata_file_path(self):
+        """Get the metadata file path object."""
+        return self._metadata_file_path
+
+    def update_status(self, status):
+        """
+        Update the current file status.
+
+        :param: status: status to be updated to
+
+        """
+
+        # Read File
+        with open(
+            self._metadata_file_path, "r", encoding="utf8"
+        ) as input_file:
+            data = yaml.safe_load(input_file)
+
+        # Update File
+        for file in data["files"]:
+            if self._full_path in file["path"]:
+                file["status"] = status
+
+        # Write YAML file
+        with open(self._metadata_file_path, "w", encoding="utf8") as out_file:
+            yaml.safe_dump(data, out_file, default_flow_style=False)

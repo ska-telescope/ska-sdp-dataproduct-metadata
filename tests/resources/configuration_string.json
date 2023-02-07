@@ -1,5 +1,5 @@
 {
-   "eb_id":"eb-mvp01-20200325-00001",
+   "eb_id":"eb-test-20200325-00001",
    "max_length":100.0,
    "context":{
 
@@ -8,31 +8,6 @@
       {
          "beam_id":"vis0",
          "function":"visibilities"
-      },
-      {
-         "beam_id":"pss1",
-         "search_beam_id":1,
-         "function":"pulsar search"
-      },
-      {
-         "beam_id":"pss2",
-         "search_beam_id":2,
-         "function":"pulsar search"
-      },
-      {
-         "beam_id":"pst1",
-         "timing_beam_id":1,
-         "function":"pulsar timing"
-      },
-      {
-         "beam_id":"pst2",
-         "timing_beam_id":2,
-         "function":"pulsar timing"
-      },
-      {
-         "beam_id":"vlbi1",
-         "vlbi_beam_id":1,
-         "function":"vlbi"
       }
    ],
    "scan_types":[
@@ -41,31 +16,6 @@
          "beams":{
             "vis0":{
                "channels_id":"vis_channels",
-               "polarisations_id":"all"
-            },
-            "pss1":{
-               "field_id":"pss_field_0",
-               "channels_id":"pulsar_channels",
-               "polarisations_id":"all"
-            },
-            "pss2":{
-               "field_id":"pss_field_1",
-               "channels_id":"pulsar_channels",
-               "polarisations_id":"all"
-            },
-            "pst1":{
-               "field_id":"pst_field_0",
-               "channels_id":"pulsar_channels",
-               "polarisations_id":"all"
-            },
-            "pst2":{
-               "field_id":"pst_field_1",
-               "channels_id":"pulsar_channels",
-               "polarisations_id":"all"
-            },
-            "vlbi":{
-               "field_id":"vlbi_field",
-               "channels_id":"vlbi_channels",
                "polarisations_id":"all"
             }
          }
@@ -112,18 +62,6 @@
                ]
             }
          ]
-      },
-      {
-         "channels_id": "pulsar_channels",
-         "spectral_windows": [
-            {
-               "spectral_window_id": "pulsar_fsp_channels",
-               "count": 2,
-               "start": 0,
-               "freq_min": 350000000.0,
-               "freq_max": 368000000.0
-            }
-         ]
       }
    ],
    "polarisations":[
@@ -160,36 +98,12 @@
          "pb_id":"pb-test-20200425-00000",
          "script":{
             "kind":"realtime",
-            "name":"test-receive-addresses",
-            "version":"0.3.3"
+            "name":"vis-receive",
+            "version":"0.6.0"
          },
          "parameters":{
             "length":10,
             "duration":20
-         }
-      },
-      {
-         "pb_id":"pb-test-20200425-00001",
-         "script":{
-            "kind":"realtime",
-            "name":"test-new-receive",
-            "version":"0.1.0"
-         },
-         "parameters":{
-            "length":10,
-            "duration":20
-         }
-      },
-      {
-         "pb_id":"pb-test-20200425-00002",
-         "script":{
-            "kind":"batch",
-            "name":"test-dask",
-            "version":"0.2.1"
-         },
-         "parameters":{
-            "length":10,
-            "duration":60
          }
       }
    ]
