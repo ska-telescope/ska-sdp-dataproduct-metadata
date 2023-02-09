@@ -67,7 +67,7 @@ def test_metadata_generation():
     assert generated_metadata == read_file(OUTPUT_METADATA_WITHOUT_FILES)
 
     # Check when files are added
-    file = metadata.new_files(path="vis.ms", description="raw visibilities")
+    file = metadata.new_file(path="vis.ms", description="raw visibilities")
     metadata_with_files = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     assert metadata_with_files == read_file(OUTPUT_METADATA_WITH_FILES)
 
@@ -145,12 +145,12 @@ def test_with_duplicate_file_path():
 
     # Check when files are added
     path = "vis.ms"
-    metadata.new_files(path=path, description="raw visibilities")
+    metadata.new_file(path=path, description="raw visibilities")
 
     with pytest.raises(
         ValueError, match=r"File with same path already exists!"
     ):
-        metadata.new_files(path=path, description="raw visibilities")
+        metadata.new_file(path=path, description="raw visibilities")
 
 
 # -----------------------------------------------------------------------------

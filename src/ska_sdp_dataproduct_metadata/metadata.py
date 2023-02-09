@@ -14,7 +14,9 @@ LOG = logging.getLogger("ska_sdp_dataproduct_metadata")
 LOG.setLevel(logging.INFO)
 
 METADATA_TEMPLATE = "metadata_defaults.yaml"
-METADATA_FILENAME = "ska-data-product.yaml"
+METADATA_FILENAME = os.environ.get(
+    "METADATA_FILENAME", "ska-data-product.yaml"
+)
 
 
 class MetaData:
@@ -45,10 +47,9 @@ class MetaData:
             self._pb_id = pb_id
         LOG.info("Processing Block ID %s", self._pb_id)
 
-        # Get processing Block, eb_id and deployment from config DB
+        # Get processing Block and eb_id from config DB
         self._pb = None
         self._eb_id = None
-        self._deployment = None
         for txn in self._config.txn():
             self._pb = txn.get_processing_block(self._pb_id)
 
@@ -107,9 +108,9 @@ class MetaData:
         config_data["image"] = script["image"].split(":", 1)[0]
         config_data["version"] = pb_script["version"]
 
-    def new_files(self, path=None, description=None):
+    def new_file(self, path=None, description=None):
         """
-        Creates new files into the metadata and add current file status.
+        Creates a new file into the metadata and add current file status.
 
         :param path: file name of the data product
         :param description: Description of the file
@@ -117,7 +118,7 @@ class MetaData:
 
         """
 
-        full_path = f"{self._data_product_path}/{path}"
+        full_path = os.path.normpath(f"{self._data_product_path}/{path}")
 
         for file in self._data["files"]:
             if full_path in file["path"]:

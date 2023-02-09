@@ -18,3 +18,5 @@ Below shows the contents of the metadata and brief description about them:
         - ``failure``: Not finished successfully, files might be incomplete or corrupt
 
 More details can be found in `ADR-55 <https://confluence.skatelescope.org/display/SWSI/ADR-55+Definition+of+metadata+for+data+management+at+AA0.5>`_
+
+Note - If the metadata filename needs to be updated, you can do that by publishing it on `METADATA_FILENAME` environment variable.
