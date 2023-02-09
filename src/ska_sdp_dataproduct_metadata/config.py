@@ -1,13 +1,14 @@
 """Connect to SDP configuration database."""
 
 import logging
-
 import os
+
 import ska_sdp_config
 
 FEATURE_CONFIG_DB = os.environ.get("FEATURE_CONFIG_DB")
 
 LOG = logging.getLogger("ska_sdp_dataproduct_metadata")
+
 
 def new_config_client():
 

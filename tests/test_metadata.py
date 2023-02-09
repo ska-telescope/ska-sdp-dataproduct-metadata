@@ -78,8 +78,6 @@ def test_metadata_generation():
     )
     assert updated_status_files_metadata == read_file(UPDATED_METADATA)
 
-    assert 1 == 2
-
 
 def test_no_pb():
     """
@@ -95,9 +93,9 @@ def test_no_pb():
         MetaData(pb_id, mount_path=MOUNT_PATH)
 
 
-def test_no_deployment():
+def test_no_script():
     """
-    Check that ValueError is raised when there is no deployment"
+    Check that ValueError is raised when there is no script"
     """
 
     # Wipe config db and directories
@@ -108,10 +106,12 @@ def test_no_deployment():
 
     # Get processing block iD
     for txn in CONFIG_DB_CLIENT.txn():
+        # Deleting script to test
+        txn.delete_script("realtime", "vis-receive", "0.6.0")
         pb_list = txn.list_processing_blocks()
         pb_id = pb_list[0]
 
-    with pytest.raises(ValueError, match=r"Deployment is None!"):
+    with pytest.raises(ValueError, match=r"Script is None!"):
         MetaData(pb_id, mount_path=MOUNT_PATH)
 
 
@@ -135,18 +135,6 @@ def test_with_duplicate_file_path():
     for txn in CONFIG_DB_CLIENT.txn():
         processing_block = txn.get_processing_block(pb_id)
     eb_id = processing_block.eb_id
-
-    # Creating a fake deployment
-    deploy_name = "test"
-    deploy_id = f"proc-{pb_id}-{deploy_name}"
-    chart = {
-        "chart": "artefact.skao.int/ska-sdp-script-vis-receive",
-        "values": {},
-    }
-    deploy = ska_sdp_config.Deployment(deploy_id, "helm", chart)
-
-    for txn in CONFIG_DB_CLIENT.txn():
-        txn.create_deployment(deploy)
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
     metadata = MetaData(pb_id, mount_path=MOUNT_PATH)
@@ -182,7 +170,7 @@ def clean_up(path):
     CONFIG_DB_CLIENT.backend.delete("/pb", must_exist=False, recursive=True)
     CONFIG_DB_CLIENT.backend.delete("/eb", must_exist=False, recursive=True)
     CONFIG_DB_CLIENT.backend.delete(
-        "/deploy", must_exist=False, recursive=True
+        "/script", must_exist=False, recursive=True
     )
 
     if os.path.exists(path):
@@ -200,6 +188,20 @@ def create_eb_pb():
             txn.create_execution_block(eb_id, execution_block)
         for processing_block in processing_blocks:
             txn.create_processing_block(processing_block)
+
+            # Create script
+            pb_script = processing_block.script
+            script_image = "artefact.skao.int/ska-sdp-script-"
+            script = {
+                "image": f"{script_image}{pb_script['name']}:"
+                f"{pb_script['version']}"
+            }
+            txn.create_script(
+                pb_script["kind"],
+                pb_script["name"],
+                pb_script["version"],
+                script,
+            )
 
 
 def read_configuration_string():

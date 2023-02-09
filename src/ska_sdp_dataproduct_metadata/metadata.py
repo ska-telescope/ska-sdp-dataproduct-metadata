@@ -62,19 +62,21 @@ class MetaData:
                 execution_block = txn.get_execution_block(self._eb_id)
                 self._data["execution_block"] = self._eb_id
 
-            for deploy_id in txn.list_deployments():
-                if self._pb_id in deploy_id:
-                    self._deployment = txn.get_deployment(deploy_id)
-
-            if self._deployment is None:
-                raise ValueError("Deployment is None!")
+            # Get script from processing block
+            script = txn.get_script(
+                self._pb.script["kind"],
+                self._pb.script["name"],
+                self._pb.script["version"],
+            )
+            if script is None:
+                raise ValueError("Script is None!")
 
         # Update context
         if self._eb_id:
             self._data["context"] = execution_block["context"]
 
         # Update config
-        self.set_config()
+        self.set_config(script)
 
         # Construct the path to write metadata
         if mount_path is None:
@@ -89,17 +91,21 @@ class MetaData:
         # Write the initial version of metadata file
         self.write()
 
-    def set_config(self):
-        """Set configuration of generating software."""
+    def set_config(self, script):
+        """
+        Set configuration of generating software.
 
+        :param script: Processing script details
+
+        """
         # Get script from processing block
-        script = self._pb.script
+        pb_script = self._pb.script
 
         config_data = self._data["config"]
         config_data["processing_block"] = self._pb_id
-        config_data["processing_script"] = script["name"]
-        config_data["image"] = self._deployment.args["chart"]
-        config_data["version"] = script["version"]
+        config_data["processing_script"] = pb_script["name"]
+        config_data["image"] = script["image"].split(":", 1)[0]
+        config_data["version"] = pb_script["version"]
 
     def new_files(self, path=None, description=None):
         """
