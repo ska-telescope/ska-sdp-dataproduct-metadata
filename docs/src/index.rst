@@ -1,16 +1,13 @@
 SDP Data Product Metadata
 =========================
 
-The SDP Data Product Metadata is a python package which is designed to work for any data products.
-This package helps to ensure that it records SKA-specific metadata. It would inform about the
-following details:
+SDP Data Product Metadata is a Python package to record SKA-specific metadata alongside
+the data products. It creates metadata files containing:
 
-    - Relevant context data which is provided by the Observation Execution Tool (OET)
-    - Who created the data (including what software [versions] were used)
-    - What is the purpose of the data recorded
-    - When and where the data was recorded
-    - What kind of data it is
-
+    - Execution block ID
+    - The context of the execution block provided by the Observation Execution Tool (OET)
+    - The configuration of the processing block used to generate the data products
+    - A list of data product files with description and status
 
 .. toctree::
   :maxdepth: 1
