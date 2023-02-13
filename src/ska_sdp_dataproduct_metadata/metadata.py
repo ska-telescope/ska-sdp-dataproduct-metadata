@@ -80,17 +80,20 @@ class MetaData:
         self.set_config(script)
 
         # Construct the path to write metadata
-        if mount_path is None:
-            self._data_product_path = (
-                f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
-            )
-        else:
-            self._data_product_path = (
-                f"{mount_path}/product/{self._eb_id}/ska-sdp/{self._pb_id}"
-            )
+        self._root = mount_path or "/"
+        self._prefix = f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
 
         # Write the initial version of metadata file
         self.write()
+
+    def runtime_abspath(self, path):
+        """
+        The absolute path of `path` relative to the standard prefix. This value
+        is valid at runtime; i.e., it maps to the filesystem in use.
+
+        :param path: A path relative to the standard prefix.
+        """
+        return os.path.normpath(f"{self._root}/{self._prefix}/{path}")
 
     def set_config(self, script):
         """
@@ -118,15 +121,14 @@ class MetaData:
 
         """
 
-        full_path = os.path.normpath(f"{self._data_product_path}/{path}")
-
+        path = os.path.normpath(path)
         for file in self._data["files"]:
-            if full_path in file["path"]:
+            if path in file["path"]:
                 raise ValueError("File with same path already exists!")
 
         add_to_file = [
             {
-                "path": full_path,
+                "path": path,
                 "description": description,
                 "status": "working",
             }
@@ -135,7 +137,7 @@ class MetaData:
         self.write()
 
         # Instance of the class to represent the file
-        file = File(full_path, self._data_product_path)
+        file = File(self, path)
         return file
 
     def read(self, file):
@@ -154,10 +156,10 @@ class MetaData:
         """Write the metadata to a yaml file."""
 
         # Check if directories exist, if not create
-        if not os.path.exists(self._data_product_path):
-            os.makedirs(self._data_product_path)
-
-        metadata_file_path = f"{self._data_product_path}/{METADATA_FILENAME}"
+        metadata_file_path = self.runtime_abspath(METADATA_FILENAME)
+        parent_dir = os.path.dirname(metadata_file_path)
+        if not os.path.exists(parent_dir):
+            os.makedirs(parent_dir)
 
         # Write YAML file
         with open(metadata_file_path, "w", encoding="utf8") as out_file:
@@ -167,16 +169,15 @@ class MetaData:
 class File:
     """Class to represent the file in the metadata."""
 
-    def __init__(self, full_path, data_product_path):
-
-        # Full path to the file and metadata file
-        self._full_path = full_path
-        self._metadata_file_path = f"{data_product_path}/{METADATA_FILENAME}"
+    def __init__(self, metadata, path):
+        self._path = path
+        self._metadata = metadata
+        self._metadata_file_path = metadata.runtime_abspath(METADATA_FILENAME)
 
     @property
     def full_path(self):
         """Get the full path object."""
-        return self._full_path
+        return self._metadata.runtime_abspath(self._path)
 
     @property
     def metadata_file_path(self):
@@ -199,7 +200,7 @@ class File:
 
         # Update File
         for file in data["files"]:
-            if self._full_path in file["path"]:
+            if self._path in file["path"]:
                 file["status"] = status
 
         # Write YAML file
