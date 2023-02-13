@@ -33,6 +33,5 @@ When new release is ready:
   - set the python version with `make python-set-release`
   - manually update the versions in
     - `docs/src/conf.py`
-    - `ska_sdp_dataproduct_metadata/version.py`
   - create the git tag with `make create-git-tag`
   - push the changes using `make push-git-tag`
