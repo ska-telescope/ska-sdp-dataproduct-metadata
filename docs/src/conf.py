@@ -24,6 +24,7 @@ import sys
 
 autodoc_mock_imports = [
     "ska_ser_logging",
+    "ska_sdp_config"
 ]
 
 

@@ -12,7 +12,7 @@ the data products. It creates metadata files containing:
 .. toctree::
   :maxdepth: 1
 
-  contents_of_metadata
+  contents-of-metadata
   api
 
 
@@ -20,5 +20,3 @@ Indices and tables
 ------------------
 
 - :ref:`genindex`
-- :ref:`modindex`
-- :ref:`search`
