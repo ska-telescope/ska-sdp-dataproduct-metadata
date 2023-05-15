@@ -79,6 +79,9 @@ class MetaData:
         # Update config
         self.set_config(script)
 
+        # Update obscore
+        self.set_obscore()
+
         # Construct the path to write metadata
         self._root = mount_path or "/"
         self._prefix = f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
@@ -110,6 +113,30 @@ class MetaData:
         config_data["processing_script"] = pb_script["name"]
         config_data["image"] = script["image"].split(":", 1)[0]
         config_data["version"] = pb_script["version"]
+
+    def set_obscore(self):
+        obscore_data = self._data["obscore"]
+
+        obscore_data["dataproduct_type"] = None
+        obscore_data["calib_level"] = 0
+        obscore_data["obs_collection"] = ""
+        obscore_data["obs_id"] = self._pb_id
+        obscore_data["access_url"] = None
+        obscore_data["access_format"] = None
+        obscore_data["access_estsize"] = None
+        obscore_data["target_name"] = None
+        obscore_data["s_ra"] = None
+        obscore_data["s_dec"] = None
+        obscore_data["t_min"] = None
+        obscore_data["t_max"] = None
+        obscore_data["t_exptime"] = None
+        obscore_data["o_ucd"] = None
+        obscore_data["pol_states"] = None
+        obscore_data["pol_xel"] = None
+        obscore_data["facility_name"] = "SKA-Observatory"
+        obscore_data["instrument_name"] = None
+
+
 
     def new_file(self, path=None, description=None):
         """

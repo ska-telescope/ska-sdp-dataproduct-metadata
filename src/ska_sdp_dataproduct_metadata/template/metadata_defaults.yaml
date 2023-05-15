@@ -19,3 +19,23 @@ config:
 # * done = processes finished, files should be complete
 # * failure = not finished sucessfully, files might be incomplete or corrupt
 files: []
+
+obscore:
+  dataproduct_type: null
+  calib_level: 0
+  obs_collection: ""
+  obs_id: ""
+  access_url: null
+  access_format: null
+  access_estsize: null
+  target_name: null
+  s_ra: null
+  s_dec: null
+  t_min: null
+  t_max: null
+  t_exptime: null
+  o_ucd: null
+  pol_states: null
+  pol_xel: null
+  facility_name: "SKA-Observatory"
+  instrument_name: null
