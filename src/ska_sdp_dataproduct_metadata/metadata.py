@@ -136,8 +136,6 @@ class MetaData:
         obscore_data["facility_name"] = "SKA-Observatory"
         obscore_data["instrument_name"] = None
 
-
-
     def new_file(self, path=None, description=None):
         """
         Creates a new file into the metadata and add current file status.
