@@ -34,6 +34,7 @@ obscore:
   t_min: null
   t_max: null
   t_exptime: null
+  t_resolution: null
   o_ucd: null
   pol_states: null
   pol_xel: null
