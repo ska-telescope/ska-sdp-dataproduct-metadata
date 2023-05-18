@@ -115,6 +115,9 @@ class MetaData:
         config_data["version"] = pb_script["version"]
 
     def set_obscore(self):
+        """
+        Set values for obscore parameters
+        """
         obscore_data = self._data["obscore"]
 
         obscore_data["dataproduct_type"] = None
@@ -130,6 +133,7 @@ class MetaData:
         obscore_data["t_min"] = None
         obscore_data["t_max"] = None
         obscore_data["t_exptime"] = None
+        obscore_data["t_resolution"] = None
         obscore_data["o_ucd"] = None
         obscore_data["pol_states"] = None
         obscore_data["pol_xel"] = None
