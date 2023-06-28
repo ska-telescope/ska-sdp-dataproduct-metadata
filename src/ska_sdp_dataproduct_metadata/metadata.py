@@ -7,6 +7,7 @@ import ska_ser_logging
 import yaml
 
 from .config import new_config_client
+from .obscore import ObsCore
 
 # Initialise logging
 ska_ser_logging.configure_logging()
@@ -120,12 +121,12 @@ class MetaData:
         """
         obscore_data = self._data["obscore"]
 
-        obscore_data["dataproduct_type"] = None
-        obscore_data["calib_level"] = 0
-        obscore_data["obs_collection"] = ""
+        obscore_data["dataproduct_type"] = ObsCore.DataProductType.UNKNOWN
+        obscore_data["calib_level"] = ObsCore.CalibrationLevel.LEVEL_0
+        obscore_data["obs_collection"] = ObsCore.ObservationCollection.UNKNOWN
         obscore_data["obs_id"] = self._pb_id
         obscore_data["access_url"] = None
-        obscore_data["access_format"] = None
+        obscore_data["access_format"] = ObsCore.AccessFormat.UNKNOWN
         obscore_data["access_estsize"] = None
         obscore_data["target_name"] = None
         obscore_data["s_ra"] = None
@@ -137,8 +138,8 @@ class MetaData:
         obscore_data["o_ucd"] = None
         obscore_data["pol_states"] = None
         obscore_data["pol_xel"] = None
-        obscore_data["facility_name"] = "SKA-Observatory"
-        obscore_data["instrument_name"] = None
+        obscore_data["facility_name"] = ObsCore.FacilityName.SKA
+        obscore_data["instrument_name"] = ObsCore.InstrumentName.UNKNOWN
 
     def new_file(self, path=None, description=None):
         """

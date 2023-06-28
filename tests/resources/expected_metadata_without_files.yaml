@@ -10,12 +10,12 @@ execution_block: eb-test-20200325-00001
 files: []
 interface: http://schema.skao.int/ska-data-product-meta/0.1
 obscore:
-  dataproduct_type: null
+  dataproduct_type: "Unknown"
   calib_level: 0
-  obs_collection: ""
+  obs_collection: "Unknown"
   obs_id: pb-test-20200425-00000
   access_url: null
-  access_format: null
+  access_format: "application/unknown"
   access_estsize: null
   target_name: null
   s_ra: null
@@ -28,4 +28,4 @@ obscore:
   pol_states: null
   pol_xel: null
   facility_name: "SKA-Observatory"
-  instrument_name: null
+  instrument_name: "Unknown"
