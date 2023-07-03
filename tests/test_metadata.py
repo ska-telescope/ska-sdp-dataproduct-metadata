@@ -62,7 +62,9 @@ def test_metadata_generation():
         txn.create_deployment(deploy)
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
-    metadata = MetaData(pb_id, mount_path=MOUNT_PATH)
+    metadata = MetaData()
+    metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+    metadata.write()
     generated_metadata = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     assert generated_metadata == read_file(OUTPUT_METADATA_WITHOUT_FILES)
 
@@ -90,7 +92,9 @@ def test_no_pb():
     pb_id = "pb-tes-20200425-00000"
 
     with pytest.raises(ValueError, match=r"Processing Block is None!"):
-        MetaData(pb_id, mount_path=MOUNT_PATH)
+        m = MetaData()
+        m.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+        m.write()
 
 
 def test_no_script():
@@ -112,7 +116,9 @@ def test_no_script():
         pb_id = pb_list[0]
 
     with pytest.raises(ValueError, match=r"Script is None!"):
-        MetaData(pb_id, mount_path=MOUNT_PATH)
+        m = MetaData()
+        m.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+        m.write()
 
 
 def test_with_duplicate_file_path():
@@ -137,7 +143,9 @@ def test_with_duplicate_file_path():
     eb_id = processing_block.eb_id
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
-    metadata = MetaData(pb_id, mount_path=MOUNT_PATH)
+    metadata = MetaData()
+    metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+    metadata.write()
 
     generated_metadata = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     expected_metadata = read_file(OUTPUT_METADATA_WITHOUT_FILES)

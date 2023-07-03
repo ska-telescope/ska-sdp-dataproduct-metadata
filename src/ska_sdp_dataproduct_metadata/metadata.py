@@ -22,23 +22,30 @@ METADATA_FILENAME = os.environ.get(
 class MetaData:
     """
     Class for generating the metadata file
-
-    :param pb_id: processing block ID
-    :type mount_path: path where the data product volume is mounted.
-
     """
 
-    def __init__(self, pb_id=None, mount_path=None):
-
-        # Get connection to config DB
-        LOG.info("Opening connection to config DB")
-        self._config = new_config_client()
+    def __init__(self):
 
         # # Read metadata template
         metadata_template_path = os.path.join(
             os.path.dirname(__file__), "template", METADATA_TEMPLATE
         )
         self._data = self.read(metadata_template_path)
+
+        # Write the initial version of metadata file
+        #self.write()
+
+    def load_processing_block(self, pb_id=None, mount_path=None):
+        """
+        
+
+        :param pb_id: processing block ID
+        :type mount_path: path where the data product volume is mounted.
+        """
+
+        # Get connection to config DB
+        LOG.info("Opening connection to config DB")
+        self._config = new_config_client()
 
         # Processing block ID
         if pb_id is None:
@@ -82,9 +89,6 @@ class MetaData:
         # Construct the path to write metadata
         self._root = mount_path or "/"
         self._prefix = f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
-
-        # Write the initial version of metadata file
-        self.write()
 
     def runtime_abspath(self, path):
         """
