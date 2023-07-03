@@ -31,13 +31,19 @@ class MetaData:
             os.path.dirname(__file__), "template", METADATA_TEMPLATE
         )
         self._data = self.read(metadata_template_path)
+        self._config = None
+        self._pb_id = None
+        self._pb = None
+        self._eb_id = None
+        self._root = "/"
+        self._prefix = ""
 
         # Write the initial version of metadata file
-        #self.write()
+        # self.write()
 
     def load_processing_block(self, pb_id=None, mount_path=None):
         """
-        
+
 
         :param pb_id: processing block ID
         :type mount_path: path where the data product volume is mounted.

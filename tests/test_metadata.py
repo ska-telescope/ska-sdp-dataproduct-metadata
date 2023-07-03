@@ -92,9 +92,9 @@ def test_no_pb():
     pb_id = "pb-tes-20200425-00000"
 
     with pytest.raises(ValueError, match=r"Processing Block is None!"):
-        m = MetaData()
-        m.load_processing_block(pb_id, mount_path=MOUNT_PATH)
-        m.write()
+        metadata = MetaData()
+        metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+        metadata.write()
 
 
 def test_no_script():
@@ -116,9 +116,9 @@ def test_no_script():
         pb_id = pb_list[0]
 
     with pytest.raises(ValueError, match=r"Script is None!"):
-        m = MetaData()
-        m.load_processing_block(pb_id, mount_path=MOUNT_PATH)
-        m.write()
+        metadata = MetaData()
+        metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+        metadata.write()
 
 
 def test_with_duplicate_file_path():
