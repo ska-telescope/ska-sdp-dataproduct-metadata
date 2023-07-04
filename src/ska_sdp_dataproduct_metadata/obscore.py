@@ -3,7 +3,6 @@
 """IVOA ObsCore Attributes"""
 
 
-# pylint: disable-next=too-few-public-methods
 class ObsCore:
     """
     SKA-specific possible values for ObsCore attributes
