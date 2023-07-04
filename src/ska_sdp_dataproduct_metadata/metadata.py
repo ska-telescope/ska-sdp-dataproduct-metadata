@@ -130,12 +130,13 @@ class MetaData:
         config_data.image = script["image"].split(":", 1)[0]
         config_data.version = pb_script["version"]
 
-    def new_file(self, path=None, description=None):
+    def new_file(self, path=None, description=None, crc=None):
         """
         Creates a new file into the metadata and add current file status.
 
         :param path: file name of the data product
         :param description: Description of the file
+        :param crc: Checksum of the file. NB: CRC is supplied, not calculated
         :returns: instance of the File class
 
         """
@@ -147,8 +148,9 @@ class MetaData:
 
         add_to_file = [
             {
-                "path": path,
+                "crc": crc,
                 "description": description,
+                "path": path,
                 "status": "working",
             }
         ]

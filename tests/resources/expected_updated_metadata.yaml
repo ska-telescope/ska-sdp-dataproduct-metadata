@@ -11,4 +11,5 @@ files:
 - description: raw visibilities
   path: vis.ms
   status: done
+  crc: null
 interface: http://schema.skao.int/ska-data-product-meta/0.1
