@@ -138,8 +138,8 @@ class MetaData:
         obscore_data["o_ucd"] = None
         obscore_data["pol_states"] = None
         obscore_data["pol_xel"] = None
-        obscore_data["facility_name"] = ObsCore.FacilityName.SKA
-        obscore_data["instrument_name"] = ObsCore.InstrumentName.UNKNOWN
+        obscore_data["facility_name"] = ObsCore.SKA
+        obscore_data["instrument_name"] = ObsCore.UNKNOWN
 
     def new_file(self, path=None, description=None):
         """

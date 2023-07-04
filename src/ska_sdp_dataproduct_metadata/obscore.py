@@ -8,6 +8,11 @@ class ObsCore:
     SKA-specific possible values for ObsCore attributes
     """
 
+    UNKNOWN = "Unknown"
+    SKA = "SKA-Observatory"
+    SKA_LOW = "SKA-LOW"
+    SKA_MID = "SKA-MID"
+
     class DataProductType:
         """
         A simple string value describing the primary nature
@@ -47,19 +52,3 @@ class ObsCore:
 
         UNKNOWN = "application/unknown"
         TAR_GZ = "application/x-tar-gzip"
-
-    class FacilityName:
-        """
-        Name of the facility used for this observation
-        """
-
-        SKA = "SKA-Observatory"
-
-    class InstrumentName:
-        """
-        Name of the instrument used for this observation
-        """
-
-        UNKNOWN = "Unknown"
-        SKA_LOW = "SKA-LOW"
-        SKA_MID = "SKA-MID"
