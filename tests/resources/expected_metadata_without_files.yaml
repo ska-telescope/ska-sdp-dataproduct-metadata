@@ -13,7 +13,7 @@ obscore:
   dataproduct_type: "Unknown"
   calib_level: 0
   obs_collection: "Unknown"
-  obs_id: pb-test-20200425-00000
+  obs_id: ""
   access_url: null
   access_format: "application/unknown"
   access_estsize: null

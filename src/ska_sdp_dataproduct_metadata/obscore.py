@@ -1,8 +1,10 @@
-# pylint: disable=too-few-public-methods
-
 """IVOA ObsCore Attributes"""
 
+from dataclasses import dataclass
+from enum import Enum, StrEnum
 
+
+@dataclass
 class ObsCore:
     """
     SKA-specific possible values for ObsCore attributes
@@ -13,7 +15,7 @@ class ObsCore:
     SKA_LOW = "SKA-LOW"
     SKA_MID = "SKA-MID"
 
-    class DataProductType:
+    class DataProductType(StrEnum):
         """
         A simple string value describing the primary nature
         of the data product
@@ -22,7 +24,7 @@ class ObsCore:
         MS = "MS"
         UNKNOWN = "Unknown"
 
-    class CalibrationLevel:
+    class CalibrationLevel(Enum):
         """
         The amount of calibration processing that has been
         applied to create the data product
@@ -36,7 +38,7 @@ class ObsCore:
         LEVEL_3 = 3
         LEVEL_4 = 4
 
-    class ObservationCollection:
+    class ObservationCollection(StrEnum):
         """
         A string identifying the data collection to which
         the data product belongs
@@ -45,7 +47,7 @@ class ObsCore:
         UNKNOWN = "Unknown"
         SIMULATION = "Simulation"
 
-    class AccessFormat:
+    class AccessFormat(StrEnum):
         """
         The format (mime-type) of the data product if downloaded as a file
         """
