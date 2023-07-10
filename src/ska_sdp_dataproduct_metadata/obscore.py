@@ -1,7 +1,7 @@
 """IVOA ObsCore Attributes"""
 
 from dataclasses import dataclass
-from enum import Enum, StrEnum
+from enum import Enum
 
 
 @dataclass
@@ -15,7 +15,7 @@ class ObsCore:
     SKA_LOW = "SKA-LOW"
     SKA_MID = "SKA-MID"
 
-    class DataProductType(StrEnum):
+    class DataProductType(str, Enum):
         """
         A simple string value describing the primary nature
         of the data product
@@ -38,7 +38,7 @@ class ObsCore:
         LEVEL_3 = 3
         LEVEL_4 = 4
 
-    class ObservationCollection(StrEnum):
+    class ObservationCollection(str, Enum):
         """
         A string identifying the data collection to which
         the data product belongs
@@ -47,7 +47,7 @@ class ObsCore:
         UNKNOWN = "Unknown"
         SIMULATION = "Simulation"
 
-    class AccessFormat(StrEnum):
+    class AccessFormat(str, Enum):
         """
         The format (mime-type) of the data product if downloaded as a file
         """
