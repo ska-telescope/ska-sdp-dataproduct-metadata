@@ -108,6 +108,13 @@ class MetaData:
         """
         return os.path.normpath(f"{self._root}/{self._prefix}/{path}")
 
+    def set_id(self, metadata_id):
+        """
+        Set the id for this metadata file
+        """
+        self._eb_id = metadata_id
+        self._data.execution_block = metadata_id
+
     def get_data(self):
         """
         Return the data dictionary within the MetaData object

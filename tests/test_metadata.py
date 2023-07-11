@@ -9,7 +9,7 @@ import pytest
 import ska_sdp_config
 import yaml
 
-from ska_sdp_dataproduct_metadata import MetaData, new_config_client
+from ska_sdp_dataproduct_metadata import MetaData, ObsCore, new_config_client
 
 LOG = logging.getLogger("metadata-test")
 LOG.setLevel(logging.DEBUG)
@@ -24,6 +24,9 @@ OUTPUT_METADATA_WITHOUT_FILES = (
 )
 OUTPUT_METADATA_WITH_FILES = (
     "tests/resources/expected_metadata_with_files.yaml"
+)
+OUTPUT_METADATA_OBSCORE_WITHOUT_FILES = (
+    "tests/resources/expected_metadata_obscore_without_files.yaml"
 )
 UPDATED_METADATA = "tests/resources/expected_updated_metadata.yaml"
 
@@ -159,6 +162,40 @@ def test_with_duplicate_file_path():
         ValueError, match=r"File with same path already exists!"
     ):
         metadata.new_file(path=path, description="raw visibilities")
+
+
+def test_write_obscore_attributes():
+    """
+    Check if changes to the values of the obscore attributes are reflected in
+    the written file
+    """
+
+    # Wipe config db and directories
+    clean_up(f"{MOUNT_PATH}/product")
+
+    # create a dummy eb_id and pb_id just for the file path
+    eb_id = "test"
+    pb_id = "test"
+
+    # create the dataproduct path
+    data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
+
+    metadata = MetaData()
+    metadata.set_id(eb_id)
+    data = metadata.get_data()
+    data.obscore.dataproduct_type = ObsCore.DataProductType.MS
+    data.obscore.access_format = ObsCore.AccessFormat.TAR_GZ
+    data.obscore.calib_level = ObsCore.CalibrationLevel.LEVEL_4
+    data.obscore.obs_collection = ObsCore.ObservationCollection.SIMULATION
+    data.obscore.facility_name = ObsCore.SKA
+    data.obscore.instrument_name = ObsCore.SKA_LOW
+
+    # write output
+    metadata.write(f"{data_product_path}/{METADATA_FILENAME}")
+
+    generated_metadata = read_file(f"{data_product_path}/{METADATA_FILENAME}")
+    expected_metadata = read_file(OUTPUT_METADATA_OBSCORE_WITHOUT_FILES)
+    assert generated_metadata == expected_metadata
 
 
 # -----------------------------------------------------------------------------
