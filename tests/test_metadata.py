@@ -72,7 +72,9 @@ def test_metadata_generation():
     assert generated_metadata == read_file(OUTPUT_METADATA_WITHOUT_FILES)
 
     # Check when files are added
-    file = metadata.new_file(path="vis.ms", description="raw visibilities", crc="3421780262")
+    file = metadata.new_file(
+        path="vis.ms", description="raw visibilities", crc="3421780262"
+    )
     metadata_with_files = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     assert metadata_with_files == read_file(OUTPUT_METADATA_WITH_FILES)
 
