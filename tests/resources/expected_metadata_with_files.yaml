@@ -11,7 +11,7 @@ files:
 - description: raw visibilities
   path: vis.ms
   status: working
-  crc: null
+  crc: "3421780262"
 interface: http://schema.skao.int/ska-data-product-meta/0.1
 obscore:
   dataproduct_type: "Unknown"
