@@ -183,7 +183,7 @@ def test_write_obscore_attributes():
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
 
     metadata = MetaData()
-    metadata.set_id(eb_id)
+    metadata.set_execution_block_id(eb_id)
     data = metadata.get_data()
     data.obscore.dataproduct_type = ObsCore.DataProductType.MS
     data.obscore.access_format = ObsCore.AccessFormat.TAR_GZ

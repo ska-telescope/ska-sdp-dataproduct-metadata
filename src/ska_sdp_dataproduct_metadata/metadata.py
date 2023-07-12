@@ -110,7 +110,7 @@ class MetaData:
         """
         return os.path.normpath(f"{self._root}/{self._prefix}/{path}")
 
-    def set_id(self, execution_block_id):
+    def set_execution_block_id(self, execution_block_id):
         """
         Set the execution_block_id for this MetaData object
         NB: If this MetaData object describes a dataproduct that was not
