@@ -24,7 +24,7 @@ class ObsCore:
         MS = "MS"
         UNKNOWN = "Unknown"
 
-    class CalibrationLevel(Enum):
+    class CalibrationLevel(int, Enum):
         """
         The amount of calibration processing that has been
         applied to create the data product

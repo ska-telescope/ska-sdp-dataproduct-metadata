@@ -9,7 +9,7 @@ import pytest
 import ska_sdp_config
 import yaml
 
-from ska_sdp_dataproduct_metadata import MetaData, new_config_client
+from ska_sdp_dataproduct_metadata import MetaData, ObsCore, new_config_client
 
 LOG = logging.getLogger("metadata-test")
 LOG.setLevel(logging.DEBUG)
@@ -24,6 +24,9 @@ OUTPUT_METADATA_WITHOUT_FILES = (
 )
 OUTPUT_METADATA_WITH_FILES = (
     "tests/resources/expected_metadata_with_files.yaml"
+)
+OUTPUT_METADATA_OBSCORE_WITHOUT_FILES = (
+    "tests/resources/expected_metadata_obscore_without_files.yaml"
 )
 UPDATED_METADATA = "tests/resources/expected_updated_metadata.yaml"
 
@@ -62,12 +65,16 @@ def test_metadata_generation():
         txn.create_deployment(deploy)
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
-    metadata = MetaData(pb_id, mount_path=MOUNT_PATH)
+    metadata = MetaData()
+    metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+    metadata.write()
     generated_metadata = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     assert generated_metadata == read_file(OUTPUT_METADATA_WITHOUT_FILES)
 
     # Check when files are added
-    file = metadata.new_file(path="vis.ms", description="raw visibilities")
+    file = metadata.new_file(
+        path="vis.ms", description="raw visibilities", crc="3421780262"
+    )
     metadata_with_files = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     assert metadata_with_files == read_file(OUTPUT_METADATA_WITH_FILES)
 
@@ -90,7 +97,9 @@ def test_no_pb():
     pb_id = "pb-tes-20200425-00000"
 
     with pytest.raises(ValueError, match=r"Processing Block is None!"):
-        MetaData(pb_id, mount_path=MOUNT_PATH)
+        metadata = MetaData()
+        metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+        metadata.write()
 
 
 def test_no_script():
@@ -112,7 +121,9 @@ def test_no_script():
         pb_id = pb_list[0]
 
     with pytest.raises(ValueError, match=r"Script is None!"):
-        MetaData(pb_id, mount_path=MOUNT_PATH)
+        metadata = MetaData()
+        metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+        metadata.write()
 
 
 def test_with_duplicate_file_path():
@@ -137,7 +148,9 @@ def test_with_duplicate_file_path():
     eb_id = processing_block.eb_id
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
-    metadata = MetaData(pb_id, mount_path=MOUNT_PATH)
+    metadata = MetaData()
+    metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+    metadata.write()
 
     generated_metadata = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     expected_metadata = read_file(OUTPUT_METADATA_WITHOUT_FILES)
@@ -151,6 +164,40 @@ def test_with_duplicate_file_path():
         ValueError, match=r"File with same path already exists!"
     ):
         metadata.new_file(path=path, description="raw visibilities")
+
+
+def test_write_obscore_attributes():
+    """
+    Check if changes to the values of the obscore attributes are reflected in
+    the written file
+    """
+
+    # Wipe config db and directories
+    clean_up(f"{MOUNT_PATH}/product")
+
+    # create a dummy eb_id and pb_id just for the file path
+    eb_id = "test"
+    pb_id = "test"
+
+    # create the dataproduct path
+    data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
+
+    metadata = MetaData()
+    metadata.set_execution_block_id(eb_id)
+    data = metadata.get_data()
+    data.obscore.dataproduct_type = ObsCore.DataProductType.MS
+    data.obscore.access_format = ObsCore.AccessFormat.TAR_GZ
+    data.obscore.calib_level = ObsCore.CalibrationLevel.LEVEL_4
+    data.obscore.obs_collection = ObsCore.ObservationCollection.SIMULATION
+    data.obscore.facility_name = ObsCore.SKA
+    data.obscore.instrument_name = ObsCore.SKA_LOW
+
+    # write output
+    metadata.write(f"{data_product_path}/{METADATA_FILENAME}")
+
+    generated_metadata = read_file(f"{data_product_path}/{METADATA_FILENAME}")
+    expected_metadata = read_file(OUTPUT_METADATA_OBSCORE_WITHOUT_FILES)
+    assert generated_metadata == expected_metadata
 
 
 # -----------------------------------------------------------------------------

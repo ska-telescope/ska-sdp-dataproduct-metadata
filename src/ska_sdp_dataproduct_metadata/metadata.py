@@ -4,7 +4,7 @@ import logging
 import os
 
 import ska_ser_logging
-import yaml
+from benedict import benedict
 
 from .config import new_config_client
 
@@ -23,22 +23,40 @@ class MetaData:
     """
     Class for generating the metadata file
 
-    :param pb_id: processing block ID
-    :type mount_path: path where the data product volume is mounted.
-
+    :param path: location of the metadata file to read
     """
 
-    def __init__(self, pb_id=None, mount_path=None):
+    def __init__(self, path=None):
+
+        # determine template filename
+        metadata_template_path = os.path.join(
+            os.path.dirname(__file__), "template", METADATA_TEMPLATE
+        )
+
+        # if no path specified, use metadata template
+        path = path or metadata_template_path
+
+        # read data from yaml
+        self._data = self.read(path)
+
+        self._config = None
+        self._pb_id = None
+        self._pb = None
+        self._eb_id = None
+        self._root = "/"
+        self._prefix = ""
+
+    def load_processing_block(self, pb_id=None, mount_path=None):
+        """
+        Configure a MetaData object based on the data in a processing block
+
+        :param pb_id: processing block ID
+        :type mount_path: path where the data product volume is mounted.
+        """
 
         # Get connection to config DB
         LOG.info("Opening connection to config DB")
         self._config = new_config_client()
-
-        # # Read metadata template
-        metadata_template_path = os.path.join(
-            os.path.dirname(__file__), "template", METADATA_TEMPLATE
-        )
-        self._data = self.read(metadata_template_path)
 
         # Processing block ID
         if pb_id is None:
@@ -61,7 +79,7 @@ class MetaData:
 
             if self._eb_id:
                 execution_block = txn.get_execution_block(self._eb_id)
-                self._data["execution_block"] = self._eb_id
+                self._data.execution_block = self._eb_id
 
             # Get script from processing block
             script = txn.get_script(
@@ -74,7 +92,7 @@ class MetaData:
 
         # Update context
         if self._eb_id:
-            self._data["context"] = execution_block["context"]
+            self._data.context = execution_block["context"]
 
         # Update config
         self.set_config(script)
@@ -82,9 +100,6 @@ class MetaData:
         # Construct the path to write metadata
         self._root = mount_path or "/"
         self._prefix = f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
-
-        # Write the initial version of metadata file
-        self.write()
 
     def runtime_abspath(self, path):
         """
@@ -94,6 +109,24 @@ class MetaData:
         :param path: A path relative to the standard prefix.
         """
         return os.path.normpath(f"{self._root}/{self._prefix}/{path}")
+
+    def set_execution_block_id(self, execution_block_id):
+        """
+        Set the execution_block_id for this MetaData object
+        NB: If this MetaData object describes a dataproduct that was not
+        generated from an execution_block, then it is possible to use any
+        SKA Unique Identifier (https://gitlab.com/ska-telescope/ska-ser-skuid)
+
+        :param execution_block_id: an execution_block_id
+        """
+        self._eb_id = execution_block_id
+        self._data.execution_block = execution_block_id
+
+    def get_data(self):
+        """
+        Return the data dictionary within the MetaData object
+        """
+        return self._data
 
     def set_config(self, script):
         """
@@ -105,35 +138,38 @@ class MetaData:
         # Get script from processing block
         pb_script = self._pb.script
 
-        config_data = self._data["config"]
-        config_data["processing_block"] = self._pb_id
-        config_data["processing_script"] = pb_script["name"]
-        config_data["image"] = script["image"].split(":", 1)[0]
-        config_data["version"] = pb_script["version"]
+        config_data = self._data.config
+        config_data.processing_block = self._pb_id
+        config_data.processing_script = pb_script["name"]
+        config_data.image = script["image"].split(":", 1)[0]
+        config_data.version = pb_script["version"]
 
-    def new_file(self, path=None, description=None):
+    def new_file(self, path=None, description=None, crc=None):
         """
         Creates a new file into the metadata and add current file status.
 
         :param path: file name of the data product
         :param description: Description of the file
+        :param crc: CRC (Cyclic Redundancy Check) checksum for the file.
+        NB: CRC is supplied, not calculated
         :returns: instance of the File class
 
         """
 
         path = os.path.normpath(path)
-        for file in self._data["files"]:
-            if path in file["path"]:
+        for file in self._data.files:
+            if path in file.path:
                 raise ValueError("File with same path already exists!")
 
         add_to_file = [
             {
-                "path": path,
+                "crc": crc,
                 "description": description,
+                "path": path,
                 "status": "working",
             }
         ]
-        self._data["files"].extend(add_to_file)
+        self._data.files.extend(add_to_file)
         self.write()
 
         # Instance of the class to represent the file
@@ -142,28 +178,32 @@ class MetaData:
 
     def read(self, file):
         """
-        Read input metatada file and load in yaml
+        Read input metadata file and load in yaml
 
         :param file: input metadata file
         :returns: Returns the yaml loaded metadata file
 
         """
-        with open(file, "r", encoding="utf8") as input_file:
-            data = yaml.safe_load(input_file)
-        return data
+        return benedict(file, format="yaml")
 
-    def write(self):
-        """Write the metadata to a yaml file."""
+    def write(self, path=None):
+        """
+        Write the metadata to a yaml file.
+
+        :param path: output metadata file
+        """
+
+        # determine path
+        metadata_file_path = path or self.runtime_abspath(METADATA_FILENAME)
 
         # Check if directories exist, if not create
-        metadata_file_path = self.runtime_abspath(METADATA_FILENAME)
         parent_dir = os.path.dirname(metadata_file_path)
         if not os.path.exists(parent_dir):
             os.makedirs(parent_dir)
 
         # Write YAML file
         with open(metadata_file_path, "w", encoding="utf8") as out_file:
-            yaml.safe_dump(self._data, out_file, default_flow_style=False)
+            out_file.write(self._data.to_yaml())
 
 
 class File:
@@ -192,17 +232,14 @@ class File:
 
         """
 
-        # Read File
-        with open(
-            self._metadata_file_path, "r", encoding="utf8"
-        ) as input_file:
-            data = yaml.safe_load(input_file)
+        # read metadata yaml
+        metadata = MetaData(self._metadata_file_path)
+        data = metadata.get_data()
 
         # Update File
-        for file in data["files"]:
-            if self._path in file["path"]:
-                file["status"] = status
+        for file in data.files:
+            if self._path in file.path:
+                file.status = status
 
         # Write YAML file
-        with open(self._metadata_file_path, "w", encoding="utf8") as out_file:
-            yaml.safe_dump(data, out_file, default_flow_style=False)
+        metadata.write(self._metadata_file_path)
