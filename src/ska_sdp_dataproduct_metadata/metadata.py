@@ -22,6 +22,8 @@ METADATA_FILENAME = os.environ.get(
 class MetaData:
     """
     Class for generating the metadata file
+
+    :param path: location of the metadata file to read
     """
 
     def __init__(self, path=None):
@@ -35,7 +37,7 @@ class MetaData:
         path = path or metadata_template_path
 
         # read data from yaml
-        self._data = benedict(path, format="yaml")
+        self._data = self.read(path)
 
         self._config = None
         self._pb_id = None
@@ -108,12 +110,17 @@ class MetaData:
         """
         return os.path.normpath(f"{self._root}/{self._prefix}/{path}")
 
-    def set_id(self, metadata_id):
+    def set_id(self, execution_block_id):
         """
-        Set the id for this metadata file
+        Set the execution_block_id for this MetaData object
+        NB: If this MetaData object describes a dataproduct that was not
+        generated from an execution_block, then it is possible to use any
+        SKA Unique Identifier (https://gitlab.com/ska-telescope/ska-ser-skuid)
+
+        :param execution_block_id: an execution_block_id
         """
-        self._eb_id = metadata_id
-        self._data.execution_block = metadata_id
+        self._eb_id = execution_block_id
+        self._data.execution_block = execution_block_id
 
     def get_data(self):
         """
@@ -143,7 +150,8 @@ class MetaData:
 
         :param path: file name of the data product
         :param description: Description of the file
-        :param crc: Checksum of the file. NB: CRC is supplied, not calculated
+        :param crc: CRC (Cyclic Redundancy Check) checksum for the file.
+        NB: CRC is supplied, not calculated
         :returns: instance of the File class
 
         """
@@ -176,11 +184,14 @@ class MetaData:
         :returns: Returns the yaml loaded metadata file
 
         """
-        self._data = benedict(file, format="yaml")
-        return self._data
+        return benedict(file, format="yaml")
 
     def write(self, path=None):
-        """Write the metadata to a yaml file."""
+        """
+        Write the metadata to a yaml file.
+
+        :param path: output metadata file
+        """
 
         # determine path
         metadata_file_path = path or self.runtime_abspath(METADATA_FILENAME)
