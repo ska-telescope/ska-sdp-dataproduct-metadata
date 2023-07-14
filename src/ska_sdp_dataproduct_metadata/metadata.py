@@ -2,7 +2,9 @@
 
 import logging
 import os
+from urllib.parse import urlparse, urlunparse
 
+import requests
 import ska_ser_logging
 from benedict import benedict
 
@@ -204,6 +206,20 @@ class MetaData:
         # Write YAML file
         with open(metadata_file_path, "w", encoding="utf8") as out_file:
             out_file.write(self._data.to_yaml())
+
+    def request_ingest(self, address):
+        """
+        Sends the metadata to be ingested by an instance of
+        ska-sdp-dataproduct-api running at the given address
+
+        :param address: address of the dataproduct api to ingest to metadata
+        """
+        parts = urlparse(address)
+        parts._replace(path="ingestjson")
+        url = urlunparse(parts)
+
+        post_response = requests.post(url, json=self._data.to_json())
+        return post_response.json()
 
 
 class File:

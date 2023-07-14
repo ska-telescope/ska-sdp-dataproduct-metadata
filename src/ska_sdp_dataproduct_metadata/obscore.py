@@ -46,7 +46,6 @@ class ObsCore:
 
         SIMULATION = "Simulation"
         UNKNOWN = "Unknown"
-        
 
     class UCD(str, Enum):
         """
@@ -58,7 +57,7 @@ class ObsCore:
         COUNT = "phot.count"
         FLUX_DENSITY = "phot.flux.density"
         FOURIER = "stat.fourier"
-        
+
     class AccessFormat(str, Enum):
         """
         The format (mime-type) of the data product if downloaded as a file
