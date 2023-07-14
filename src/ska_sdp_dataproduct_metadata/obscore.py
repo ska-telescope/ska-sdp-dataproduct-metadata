@@ -10,10 +10,10 @@ class ObsCore:
     SKA-specific possible values for ObsCore attributes
     """
 
-    UNKNOWN = "Unknown"
     SKA = "SKA-Observatory"
     SKA_LOW = "SKA-LOW"
     SKA_MID = "SKA-MID"
+    UNKNOWN = "Unknown"
 
     class DataProductType(str, Enum):
         """
@@ -44,13 +44,29 @@ class ObsCore:
         the data product belongs
         """
 
-        UNKNOWN = "Unknown"
         SIMULATION = "Simulation"
+        UNKNOWN = "Unknown"
+        
 
+    class UCD(str, Enum):
+        """
+        A list of Unified Content Descriptors (Preite Martinez, et al. 2007)
+        describing the nature of the observable within the data product
+        https://www.ivoa.net/documents/latest/UCDlist.html
+        """
+
+        COUNT = "phot.count"
+        FLUX_DENSITY = "phot.flux.density"
+        FOURIER = "stat.fourier"
+        
     class AccessFormat(str, Enum):
         """
         The format (mime-type) of the data product if downloaded as a file
         """
 
-        UNKNOWN = "application/unknown"
+        BINARY = "application/octet-stream"
+        FITS = "image/fits"
+        JPEG = "image/jpeg"
+        PNG = "image/png"
         TAR_GZ = "application/x-tar-gzip"
+        UNKNOWN = "application/unknown"
