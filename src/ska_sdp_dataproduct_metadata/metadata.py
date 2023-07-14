@@ -218,8 +218,18 @@ class MetaData:
         parts._replace(path="ingestjson")
         url = urlunparse(parts)
 
-        post_response = requests.post(url, json=self._data.to_json())
-        return post_response.json()
+        result = None
+        try:
+            post_response = requests.post(
+                url, json=self._data.to_json(), timeout=10
+            )
+            result = post_response.json()
+        except requests.Timeout:
+            result = {"error": "Timeout"}
+        except requests.ConnectionError:
+            result = {"error": "Connection Error"}
+
+        return result
 
 
 class File:
