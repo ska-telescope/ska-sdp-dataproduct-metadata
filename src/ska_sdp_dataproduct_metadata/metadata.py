@@ -2,7 +2,7 @@
 
 import logging
 import os
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 
 import requests
 import ska_ser_logging
@@ -212,16 +212,15 @@ class MetaData:
         Sends the metadata to be ingested by an instance of
         ska-sdp-dataproduct-api running at the given address
 
-        :param address: address of the dataproduct api to ingest to metadata
+        :param address: address of the dataproduct api to ingest
+            the metadata (e.g. 'http://localhost:8000')
         """
-        parts = urlparse(address)
-        parts._replace(path="ingestjson")
-        url = urlunparse(parts)
+        url = urlparse(address)._replace(path="/ingestjson").geturl()
 
         result = None
         try:
             post_response = requests.post(
-                url, json=self._data.to_json(), timeout=10
+                url, json=self._data.dict(), timeout=10
             )
             result = post_response.json()
         except requests.Timeout:
