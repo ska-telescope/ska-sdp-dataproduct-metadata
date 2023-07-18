@@ -1,0 +1,37 @@
+config:
+  cmdline: null
+  commit: null
+  image: artefact.skao.int/ska-sdp-script-vis-receive
+  processing_block: pb-test-20200425-00000
+  processing_script: vis-receive
+  version: 0.6.0
+context: {}
+execution_block: eb-test-20200325-00001
+files:
+  description: raw visibilities
+  path: vis.ms
+  status: working
+interface: http://schema.skao.int/ska-data-product-meta/0.1
+obscore:
+  access_estsize: 59389
+  access_format: application/unknown
+  access_url: console.cloud.google.com/storage/browser/ska1-simulation-data/
+  ant_number: 6
+  calib_level: 0
+  dataproduct_type: MS
+  facility_name: ASKAP simulator
+  instrument_ant_diameter: 35.0
+  instrument_name: SKA1_Low
+  o_ucd: stat.fourier
+  obs_collection: Unknown
+  obs_id: pb-test-20200425-00000
+  obs_publisher_did: ''
+  pol_states: XX/XY/YX/YY
+  pol_xel: 4
+  s_dec: -0.4667010419832837
+  s_ra: 0.0
+  t_exptime: 5.0
+  t_max: 57196.96325366707
+  t_min: 57196.9631957967
+  t_resolution: 0.9
+  target_name: ''
