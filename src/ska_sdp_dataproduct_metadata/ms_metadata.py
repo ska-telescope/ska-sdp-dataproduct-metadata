@@ -9,10 +9,9 @@ from casacore import tables
 
 from ska_sdp_dataproduct_metadata import MetaData
 
-# pylint: disable=missing-function-docstring
-
 
 def _subtable(tbl: tables.table, name: str, readonly=True):
+    """Extract subtable from MeasurementSet"""
     try:
         table_err = False
         return (
@@ -47,6 +46,7 @@ def stokes_polarisations(corr_types: list):
 
 
 def time_to_mjd(mjd_in_secs):
+    """Convert from seconds to days, and take leap seconds into account"""
     return (
         Time(0.0, format="mjd", scale="tai")
         + TimeDelta(mjd_in_secs, format="sec", scale="tai")
@@ -63,10 +63,10 @@ def check_diameter(diameters):
 
 
 def get_dir_size(path="."):
-    # pylint: disable=W0622
+    """Calculate file size in kb"""
     total = 0
-    with os.scandir(path) as iter:
-        for entry in iter:
+    with os.scandir(path) as folder:
+        for entry in folder:
             if entry.is_file():
                 total += entry.stat().st_size
             elif entry.is_dir():
@@ -78,10 +78,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("ms_file", help="path of the ms file to use, <path>.ms")
 args = parser.parse_args()
 
-# arbitrarily chosen ms file for testing purposes:
-AA05LOW = (
-    "/Users/00110564/ska/ska-sdp-realtime-receive-modules/data/AA05LOW.ms"
-)
 
 # Extract the file name and extension
 full_path = args.ms_file
@@ -192,7 +188,7 @@ m = MetaData()
 data = m.get_data()  # gets the _data attribute
 data.obscore = {
     "access_estsize": int(get_dir_size(full_path)),
-    "access_format": "application/unknown",  # application/x-tar-gzip
+    "access_format": "application/unknown",  # application/x-tar-gzip?
     "access_url": "console.cloud.google.com/storage/browser/"
     + "ska1-simulation-data/",
     "calib_level": 0,
@@ -218,15 +214,18 @@ data.config.processing_block = "pb-test-20200425-00000"
 data.config.processing_script = "vis-receive"
 data.config.version = "0.6.0"
 data.execution_block = "eb-test-20200325-00001"
-data.files.append = ({
-    "description": "raw visibilities",
-    "path": "vis.ms",
-    "status": "working",
-})
+data.files.append(
+    {
+        "description": "raw visibilities",
+        "path": "vis.ms",
+        "status": "working",
+    }
+)
 data.interface = "http://schema.skao.int/ska-data-product-meta/0.1"
 
 
 def try_except(dictionary: dict, value_to_retrieve: str):
+    """If a value doesn't exist, the script shouldn't crash"""
     try:
         value = dictionary[value_to_retrieve]
     except KeyError:
