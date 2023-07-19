@@ -8,10 +8,6 @@ from benedict import benedict
 
 from .config import new_config_client
 
-# pylint: disable=E1101
-# the linting wants to make this change:
-# self._data.files.extend(add_to_file) --> self._data.files += add_to_file
-
 # Initialise logging
 ska_ser_logging.configure_logging()
 LOG = logging.getLogger("ska_sdp_dataproduct_metadata")

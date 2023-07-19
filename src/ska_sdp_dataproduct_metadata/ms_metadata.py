@@ -218,11 +218,11 @@ data.config.processing_block = "pb-test-20200425-00000"
 data.config.processing_script = "vis-receive"
 data.config.version = "0.6.0"
 data.execution_block = "eb-test-20200325-00001"
-data.files = {
+data.files.append = ({
     "description": "raw visibilities",
     "path": "vis.ms",
     "status": "working",
-}
+})
 data.interface = "http://schema.skao.int/ska-data-product-meta/0.1"
 
 
