@@ -32,6 +32,12 @@
 # Files created during testing
 /_build/
 test_reports.xml
+gen/*
+*.tm*
+table.*
+*.log
+*.fits
+*.png
 
 **/.cache
 **/.pytest_cache/
