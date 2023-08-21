@@ -8,7 +8,7 @@ the data products. It creates metadata files containing:
     - The context of the execution block provided by the Observation Execution Tool (OET)
     - The configuration of the processing block used to generate the data products
     - A list of data product files with description and status
-    - Associated IVOA Obscore attributes used for querying astronomical observations
+    - Associated IVOA ObsCore attributes used for querying astronomical observations
 
 .. toctree::
   :maxdepth: 1
