@@ -65,6 +65,7 @@ class ObsCore:
 
         BINARY = "application/octet-stream"
         FITS = "image/fits"
+        HDF5 = "application/x-hdf5"
         JPEG = "image/jpeg"
         PNG = "image/png"
         TAR_GZ = "application/x-tar-gzip"
