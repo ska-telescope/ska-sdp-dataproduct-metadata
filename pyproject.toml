@@ -14,7 +14,7 @@ url = "https://artefact.skao.int/repository/pypi-internal/simple"
 [tool.poetry.dependencies]
 python = "^3.10"
 ska-ser-logging = "^0.4.1"
-ska-sdp-config = "^0.5.1"
+ska-sdp-config = "^0.5.2"
 python-benedict = "^0.31.0"
 
 [tool.poetry.dev-dependencies]

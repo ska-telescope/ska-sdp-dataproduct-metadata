@@ -602,7 +602,7 @@ category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "master.tar.gz", hash = "sha256:355493e39029fc1ac231f38b9093124cc3a7d5e22bc2e19d77ade1bf68db8504"},
+    {file = "python-etcd3-v0.12.0.tar.gz", hash = "sha256:8a4042236a9a9add2799d761a7d39aee28d948fb11e0993f42c9dd70d7ba8049"},
 ]
 
 [package.dependencies]
@@ -612,7 +612,7 @@ six = ">=1.16.0"
 
 [package.source]
 type = "url"
-url = "https://github.com/kragniz/python-etcd3/archive/refs/heads/master.tar.gz"
+url = "https://gitlab.com/ska-telescope/external/python-etcd3/-/archive/master/python-etcd3-v0.12.0.tar.gz"
 
 [[package]]
 name = "etcd3-py"
@@ -621,23 +621,22 @@ description = "Python client for etcd v3 (Using gRPC-JSON-Gateway)"
 category = "main"
 optional = false
 python-versions = "^3.7"
-files = []
-develop = false
+files = [
+    {file = "etcd3-py-master.tar.gz", hash = "sha256:55edced8b4145d380667dc0ed09bb72762257780cfcf51ce29a4bef8e0a69b10"},
+]
 
 [package.dependencies]
-aiohttp = "^3.8.3"
-cryptography = "^38.0.3"
-idna = "^3.4"
-pyopenssl = "^22.1.0"
-requests = "^2.28.1"
-semantic-version = "^2.10.0"
-six = "^1.16.0"
+aiohttp = ">=3.8.3,<4.0.0"
+cryptography = ">=38.0.3,<39.0.0"
+idna = ">=3.4,<4.0"
+pyopenssl = ">=22.1.0,<23.0.0"
+requests = ">=2.28.1,<3.0.0"
+semantic-version = ">=2.10.0,<3.0.0"
+six = ">=1.16.0,<2.0.0"
 
 [package.source]
-type = "git"
-url = "https://gitlab.com/majashdown/etcd3-py.git"
-reference = "master"
-resolved_reference = "b698a23d438bfeba38cb4a0b973722b47153ae21"
+type = "url"
+url = "https://gitlab.com/ska-telescope/external/etcd3-py/-/archive/master/etcd3-py-master.tar.gz"
 
 [[package]]
 name = "exceptiongroup"
@@ -1405,21 +1404,21 @@ files = [
 
 [[package]]
 name = "ska-sdp-config"
-version = "0.5.1"
+version = "0.5.2"
 description = "SKA SDP Configuration Library"
 category = "main"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "ska_sdp_config-0.5.1-py3-none-any.whl", hash = "sha256:0c11576fdf9dd60442444e198f025988a8a69d9ba6e33a449647c51abd1c346b"},
-    {file = "ska_sdp_config-0.5.1.tar.gz", hash = "sha256:8560a1715933b9a0f541e0c16bfb2d7d0309e3f61ba327b6c7076c8710d05e0e"},
+    {file = "ska_sdp_config-0.5.2-py3-none-any.whl", hash = "sha256:75331fbbd7037babb30f2e7e851016b2dcdd7622181a5df13d98f38711026e30"},
+    {file = "ska_sdp_config-0.5.2.tar.gz", hash = "sha256:ec7a51f670a75e78051eca9ede243cc18a7cdae6491c241ddac279ce19f3bfb8"},
 ]
 
 [package.dependencies]
 Deprecated = ">=1.2.13,<2.0.0"
 docopt = ">=0.6.2,<0.7.0"
-etcd3 = {url = "https://github.com/kragniz/python-etcd3/archive/refs/heads/master.tar.gz"}
-etcd3-py = {git = "https://gitlab.com/majashdown/etcd3-py.git", rev = "master"}
+etcd3 = {url = "https://gitlab.com/ska-telescope/external/python-etcd3/-/archive/master/python-etcd3-v0.12.0.tar.gz"}
+etcd3-py = {url = "https://gitlab.com/ska-telescope/external/etcd3-py/-/archive/master/etcd3-py-master.tar.gz"}
 PyYAML = ">=6.0,<7.0"
 requests = ">=2.30.0,<3.0.0"
 semantic-version = ">=2.10.0,<3.0.0"
@@ -1691,4 +1690,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "1683391dcdedd19d6cfd5d6cd548c2b72501e10bcbd26c034d151ce695f9d625"
+content-hash = "f51f279581db9c3f9702c741afe99c02fa3f48510048ff0fed927bc0c21f1cc0"
