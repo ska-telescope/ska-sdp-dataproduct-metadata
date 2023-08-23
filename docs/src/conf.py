@@ -24,7 +24,8 @@ import sys
 
 autodoc_mock_imports = [
     "ska_ser_logging",
-    "ska_sdp_config"
+    "ska_sdp_config",
+    "benedict"
 ]
 
 
@@ -50,9 +51,9 @@ author = "SKA SDP Developers"
 # built documents.
 #
 # The short X.Y.Z version.
-version = "0.1.1"
+version = "0.1.2"
 # The full version, including alpha/beta/rc pre-release tags.
-release = "0.1.1"
+release = "0.1.2"
 
 # -- General configuration ------------------------------------------------
 
@@ -249,4 +250,4 @@ epub_exclude_files = ["search.html"]
 # -- Extension configuration -------------------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {"https://docs.python.org/": None}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
