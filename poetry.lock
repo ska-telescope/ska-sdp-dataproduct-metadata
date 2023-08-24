@@ -1404,14 +1404,14 @@ files = [
 
 [[package]]
 name = "ska-sdp-config"
-version = "0.5.2"
+version = "0.5.3"
 description = "SKA SDP Configuration Library"
 category = "main"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "ska_sdp_config-0.5.2-py3-none-any.whl", hash = "sha256:75331fbbd7037babb30f2e7e851016b2dcdd7622181a5df13d98f38711026e30"},
-    {file = "ska_sdp_config-0.5.2.tar.gz", hash = "sha256:ec7a51f670a75e78051eca9ede243cc18a7cdae6491c241ddac279ce19f3bfb8"},
+    {file = "ska_sdp_config-0.5.3-py3-none-any.whl", hash = "sha256:e67803b5848651f1fc9a823a64037e0c40c4cffc1256e15795b6fae18086c70f"},
+    {file = "ska_sdp_config-0.5.3.tar.gz", hash = "sha256:cab9e4a5434ff76fbbc1879dd191b1c13177ba57f0aefa23e3ac2c01db81c35a"},
 ]
 
 [package.dependencies]
@@ -1690,4 +1690,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "f51f279581db9c3f9702c741afe99c02fa3f48510048ff0fed927bc0c21f1cc0"
+content-hash = "cf5736d7e59493d92733e3fa2fb8c8e3dfd2d77cd9a012a861d66c4103053627"
