@@ -1,5 +1,7 @@
 """Generating Metadata File."""
 
+import json
+import jsonschema
 import logging
 import os
 
@@ -17,6 +19,7 @@ METADATA_TEMPLATE = "metadata_defaults.yaml"
 METADATA_FILENAME = os.environ.get(
     "METADATA_FILENAME", "ska-data-product.yaml"
 )
+METADATA_SCHEMA = "metadata.json"
 
 
 class MetaData:
@@ -25,6 +28,12 @@ class MetaData:
 
     :param path: location of the metadata file to read
     """
+
+    # create a single validator for all instances of the MetaData class
+    with open(os.path.join(os.path.dirname(__file__), "schema", METADATA_SCHEMA)) as metadata_schema:
+        metadata_validator = jsonschema.validators.Draft202012Validator(
+            json.load(metadata_schema)
+        )
 
     def __init__(self, path=None):
 
@@ -178,7 +187,7 @@ class MetaData:
 
     def read(self, file):
         """
-        Read input metadata file and load in yaml
+        Read input metadata file and load in yaml.
 
         :param file: input metadata file
         :returns: Returns the yaml loaded metadata file
@@ -193,6 +202,11 @@ class MetaData:
         :param path: output metadata file
         """
 
+        # validate the data before writing
+        validation_errors = self.validate()
+        if validation_errors:
+            raise Exception("Metadata failed validation: " + validation_errors[0])
+
         # determine path
         metadata_file_path = path or self.runtime_abspath(METADATA_FILENAME)
 
@@ -204,6 +218,24 @@ class MetaData:
         # Write YAML file
         with open(metadata_file_path, "w", encoding="utf8") as out_file:
             out_file.write(self._data.to_yaml())
+
+    def validate(self) -> list:
+        """
+        Validate the current contents of the metadata against the schema.
+
+        :returns: A list of errors.
+        """
+
+        errors = []
+
+        # validate the metadata against the schema
+        validator_errors = MetaData.metadata_validator.iter_errors(self._data)
+
+        # Loop over the errors
+        for validator_error in validator_errors:
+            errors.append(validator_error)
+
+        return errors
 
 
 class File:

@@ -5,13 +5,7 @@ execution_block: null
 context: {}
 
 # Configuration used for executing the processing script
-config:
-  processing_block: null
-  processing_script: null
-  image: null
-  version: null
-  cmdline: null
-  commit: null
+config: {}
 
 # Path to files
 # Indicate current file status
@@ -20,23 +14,4 @@ config:
 # * failure = not finished successfully, files might be incomplete or corrupt
 files: []
 
-obscore:
-  dataproduct_type: "Unknown"
-  calib_level: 0
-  obs_collection: "Unknown"
-  obs_id: ""
-  access_url: null
-  access_format: "application/unknown"
-  access_estsize: null
-  target_name: null
-  s_ra: null
-  s_dec: null
-  t_min: null
-  t_max: null
-  t_exptime: null
-  t_resolution: null
-  o_ucd: null
-  pol_states: null
-  pol_xel: null
-  facility_name: "SKA-Observatory"
-  instrument_name: "Unknown"
+obscore: {}
