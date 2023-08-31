@@ -206,7 +206,7 @@
                     "type": "string"
                 },
                 "s_dec": {
-                    "type": ["number", "null"]
+                    "type": "number"
                 },
                 "s_fov": {
                     "type": "number"
@@ -215,7 +215,7 @@
                     "type": "number"
                 },
                 "s_ra": {
-                    "type": ["number", "null"]
+                    "type": "number"
                 },
                 "s_region": {
                     "type": "string"
@@ -272,7 +272,7 @@
                     "type": "string"
                 },
                 "target_name": {
-                    "type": ["string", "null"]
+                    "type": "string"
                 }
             },
             "required": [
