@@ -1,10 +1,10 @@
 """Generating Metadata File."""
 
 import json
-import jsonschema
 import logging
 import os
 
+import jsonschema
 import ska_ser_logging
 from benedict import benedict
 
@@ -30,7 +30,11 @@ class MetaData:
     """
 
     # create a single validator for all instances of the MetaData class
-    with open(os.path.join(os.path.dirname(__file__), "schema", METADATA_SCHEMA)) as metadata_schema:
+    with open(
+        os.path.join(os.path.dirname(__file__), "schema", METADATA_SCHEMA),
+        "r",
+        encoding="utf-8",
+    ) as metadata_schema:
         metadata_validator = jsonschema.validators.Draft202012Validator(
             json.load(metadata_schema)
         )
@@ -205,7 +209,7 @@ class MetaData:
         # validate the data before writing
         validation_errors = self.validate()
         if validation_errors:
-            raise Exception("Metadata failed validation: " + validation_errors[0])
+            raise validation_errors[0]
 
         # determine path
         metadata_file_path = path or self.runtime_abspath(METADATA_FILENAME)
