@@ -164,9 +164,9 @@ class MetaData:
         :param path: file name of the data product
         :param description: Description of the file
         :param crc: CRC (Cyclic Redundancy Check) checksum for the file.
-        NB: CRC is supplied, not calculated
-        :returns: instance of the File class
+            NB: CRC is supplied, not calculated
 
+        :returns: instance of the File class
         """
 
         path = os.path.normpath(path)

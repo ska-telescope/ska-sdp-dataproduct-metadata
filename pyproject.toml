@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska-sdp-dataproduct-metadata"
-version = "0.1.1"
+version = "0.2.1"
 description = "SKA SDP Data Product Metadata"
 authors = ["SKA SDP Developers"]
 repository = "https://gitlab.com/ska-telescope/sdp/ska-sdp-dataproduct-metadata"
@@ -12,9 +12,9 @@ name = "ska"
 url = "https://artefact.skao.int/repository/pypi-internal/simple"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 ska-ser-logging = "^0.4.1"
-ska-sdp-config = "^0.4.2"
+ska-sdp-config = "^0.5.3"
 python-benedict = "^0.31.0"
 jsonschema = "^4.19.0"
 
