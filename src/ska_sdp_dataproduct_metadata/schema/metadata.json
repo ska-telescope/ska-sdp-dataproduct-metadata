@@ -55,7 +55,7 @@
                 "additionalProperties": true,
                 "properties": {
                     "crc": {
-                        "type": "string"
+                        "type": ["string", "null"]
                     },
                     "description": {
                         "type": "string"

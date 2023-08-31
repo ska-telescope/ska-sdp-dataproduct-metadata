@@ -13,19 +13,6 @@ obscore:
   dataproduct_type: "MS"
   calib_level: 4
   obs_collection: "Simulation"
-  obs_id: ""
-  access_url: null
   access_format: "application/x-tar-gzip"
-  access_estsize: null
-  target_name: null
-  s_ra: null
-  s_dec: null
-  t_min: null
-  t_max: null
-  t_exptime: null
-  t_resolution: null
-  o_ucd: null
-  pol_states: null
-  pol_xel: null
   facility_name: "SKA-Observatory"
   instrument_name: "SKA-LOW"

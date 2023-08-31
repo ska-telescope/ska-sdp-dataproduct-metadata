@@ -21,9 +21,8 @@ config:
 files: []
 
 obscore:
-  access_format: "application/unknown"
   dataproduct_type: "Unknown"
+  obs_collection: "Unknown"
+  access_format: "application/unknown"
   facility_name: "SKA-Observatory"
   instrument_name: "Unknown"
-  obs_collection: "Unknown"
-  
