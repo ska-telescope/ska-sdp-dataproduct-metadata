@@ -96,9 +96,6 @@
                         "https"
                     ]
                 },
-                "ant_number": {
-                    "type": "integer"
-                },
                 "bib_reference": {
                     "type": "string"
                 },
