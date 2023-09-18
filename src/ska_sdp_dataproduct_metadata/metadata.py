@@ -35,7 +35,7 @@ class MetaData:
         "r",
         encoding="utf-8",
     ) as metadata_schema:
-        metadata_validator = jsonschema.validators.Draft202012Validator(
+        validator = jsonschema.validators.Draft202012Validator(
             json.load(metadata_schema)
         )
 
@@ -233,7 +233,7 @@ class MetaData:
         errors = []
 
         # validate the metadata against the schema
-        validator_errors = MetaData.metadata_validator.iter_errors(self._data)
+        validator_errors = MetaData.validator.iter_errors(self._data)
 
         # Loop over the errors
         for validator_error in validator_errors:
