@@ -39,6 +39,16 @@ class MetaData:
             json.load(metadata_schema)
         )
 
+    class ValidationError(Exception):
+        """
+        An exception indicating an error during validation of metadata
+        against the schema.
+        """
+
+        def __init__(self, message, errors):
+            super().__init__(message)
+            self.errors = errors
+
     def __init__(self, path=None):
 
         # determine template filename
@@ -209,7 +219,9 @@ class MetaData:
         # validate the data before writing
         validation_errors = self.validate()
         if validation_errors:
-            raise validation_errors[0]
+            raise MetaData.ValidationError(
+                "Error(s) occurred during validation.", validation_errors
+            )
 
         # determine path
         metadata_file_path = path or self.runtime_abspath(METADATA_FILENAME)
