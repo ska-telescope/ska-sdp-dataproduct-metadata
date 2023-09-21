@@ -16,6 +16,7 @@ python = "^3.10"
 ska-ser-logging = "^0.4.1"
 ska-sdp-config = "^0.5.3"
 python-benedict = "^0.31.0"
+jsonschema = "^4.19.0"
 
 [tool.poetry.dev-dependencies]
 isort = "^5.10.1"

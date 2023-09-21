@@ -86,9 +86,18 @@ def test_metadata_generation():
     assert updated_status_files_metadata == read_file(UPDATED_METADATA)
 
 
+def test_no_eb_id_is_invalid():
+    """
+    Check that a ValidationError is raised when there is no execution block id
+    """
+    with pytest.raises(MetaData.ValidationError):
+        metadata = MetaData()
+        metadata.write()
+
+
 def test_no_pb():
     """
-    Check that ValueError is raised when there is no processing block"
+    Check that ValueError is raised when there is no processing block
     """
 
     # Wipe config db and directories

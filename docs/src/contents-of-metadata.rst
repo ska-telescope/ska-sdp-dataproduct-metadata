@@ -12,6 +12,7 @@ Below shows the contents of the metadata and brief description about them:
     - ``crc``: A cyclic redundancy check (CRC) generated from the contents of the file and used to detect errors in the data
     - ``description``: Useful details about the file
     - ``path``: Path where the MS is located
+    - ``size``: Size of the file (in KB)
     - ``status``: Indicate current file status
 
         - ``working``: Processes still running, files might be missing or incomplete
