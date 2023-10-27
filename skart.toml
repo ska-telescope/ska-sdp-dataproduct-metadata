@@ -1,0 +1,8 @@
+[dep.ska-sdp-config]
+dep_type = "gitlab:python"
+project = "ska-telescope/sdp/ska-sdp-config"
+release.tag = "\\d.\\d.\\d"
+
+[dep.ska-sdp-config.sink.poetry]
+sink_type = "python:poetry"
+release.version_only = true
