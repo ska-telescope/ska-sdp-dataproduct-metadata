@@ -22,6 +22,7 @@ class ObsCore:
         """
 
         MS = "MS"
+        POINTING = "POINTING-OFFSETS"
         UNKNOWN = "Unknown"
 
     class CalibrationLevel(int, Enum):
