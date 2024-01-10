@@ -16,17 +16,19 @@ LOG.setLevel(logging.DEBUG)
 
 CONFIG_DB_CLIENT = new_config_client()
 SUBARRAY_ID = "01"
-MOUNT_PATH = "resources"
+MOUNT_PATH = "tests/resources"
 METADATA_FILENAME = "ska-data-product.yaml"
-OUTPUT_METADATA = "resources/expected_metadata.yaml"
+OUTPUT_METADATA = "tests/resources/expected_metadata.yaml"
 OUTPUT_METADATA_WITHOUT_FILES = (
-    "resources/expected_metadata_without_files.yaml"
+    "tests/resources/expected_metadata_without_files.yaml"
 )
-OUTPUT_METADATA_WITH_FILES = "resources/expected_metadata_with_files.yaml"
+OUTPUT_METADATA_WITH_FILES = (
+    "tests/resources/expected_metadata_with_files.yaml"
+)
 OUTPUT_METADATA_OBSCORE_WITHOUT_FILES = (
-    "resources/expected_metadata_obscore_without_files.yaml"
+    "tests/resources/expected_metadata_obscore_without_files.yaml"
 )
-UPDATED_METADATA = "resources/expected_updated_metadata.yaml"
+UPDATED_METADATA = "tests/resources/expected_updated_metadata.yaml"
 
 
 def test_metadata_generation():
