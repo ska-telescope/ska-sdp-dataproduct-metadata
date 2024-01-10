@@ -200,7 +200,7 @@ class MetaData:
         self.write(path=metadata_file_path)
 
         # Instance of the class to represent the file
-        file = File(self, dp_path)
+        file = File(self, dp_path, metadata_file_path=metadata_file_path)
         return file
 
     def read(self, file):
@@ -261,10 +261,13 @@ class MetaData:
 class File:
     """Class to represent the file in the metadata."""
 
-    def __init__(self, metadata, path):
+    def __init__(self, metadata, path, metadata_file_path=None):
         self._path = path
         self._metadata = metadata
-        self._metadata_file_path = metadata.runtime_abspath(METADATA_FILENAME)
+        # if no path specified, use default
+        self._metadata_file_path = (
+            metadata_file_path or metadata.runtime_abspath(METADATA_FILENAME)
+        )
 
     @property
     def full_path(self):

@@ -74,7 +74,6 @@ def test_metadata_generation():
     # Check when files are added
     file = metadata.new_file(
         dp_path="vis.ms",
-        metadata_file_path=f"{data_product_path}/{METADATA_FILENAME}",
         description="raw visibilities",
         crc="3421780262",
     )
@@ -176,6 +175,53 @@ def test_with_duplicate_file_path():
         ValueError, match=r"File with same path already exists!"
     ):
         metadata.new_file(dp_path=path, description="raw visibilities")
+
+
+def test_custom_metadata_filename():
+    """
+    Check if the yaml file is updated with a custom name of metadata file
+    """
+    # Wipe config db and directories
+    clean_up(f"{MOUNT_PATH}/product")
+
+    # Create eb and pb
+    create_eb_pb()
+
+    # Get processing block iD
+    for txn in CONFIG_DB_CLIENT.txn():
+        pb_list = txn.list_processing_blocks()
+        pb_id = pb_list[0]
+
+    # Processing Block
+    for txn in CONFIG_DB_CLIENT.txn():
+        processing_block = txn.get_processing_block(pb_id)
+    eb_id = processing_block.eb_id
+
+    data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
+    new_metadata_filename = "added_files.yaml"
+
+    metadata = MetaData()
+    metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+    metadata.write(path=f"{data_product_path}/{new_metadata_filename}")
+
+    # Check when files are added
+    file = metadata.new_file(
+        dp_path="vis.ms",
+        metadata_file_path=f"{data_product_path}/{new_metadata_filename}",
+        description="raw visibilities",
+        crc="3421780262",
+    )
+    metadata_with_files = read_file(
+        f"{data_product_path}/{new_metadata_filename}"
+    )
+    assert metadata_with_files == read_file(OUTPUT_METADATA_WITH_FILES)
+
+    # Check with status has been updated
+    file.update_status("done")
+    updated_status_files_metadata = read_file(
+        f"{data_product_path}/{new_metadata_filename}"
+    )
+    assert updated_status_files_metadata == read_file(UPDATED_METADATA)
 
 
 def test_write_obscore_attributes():
