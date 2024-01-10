@@ -16,19 +16,17 @@ LOG.setLevel(logging.DEBUG)
 
 CONFIG_DB_CLIENT = new_config_client()
 SUBARRAY_ID = "01"
-MOUNT_PATH = "tests/resources"
+MOUNT_PATH = "resources"
 METADATA_FILENAME = "ska-data-product.yaml"
-OUTPUT_METADATA = "tests/resources/expected_metadata.yaml"
+OUTPUT_METADATA = "resources/expected_metadata.yaml"
 OUTPUT_METADATA_WITHOUT_FILES = (
-    "tests/resources/expected_metadata_without_files.yaml"
+    "resources/expected_metadata_without_files.yaml"
 )
-OUTPUT_METADATA_WITH_FILES = (
-    "tests/resources/expected_metadata_with_files.yaml"
-)
+OUTPUT_METADATA_WITH_FILES = "resources/expected_metadata_with_files.yaml"
 OUTPUT_METADATA_OBSCORE_WITHOUT_FILES = (
-    "tests/resources/expected_metadata_obscore_without_files.yaml"
+    "resources/expected_metadata_obscore_without_files.yaml"
 )
-UPDATED_METADATA = "tests/resources/expected_updated_metadata.yaml"
+UPDATED_METADATA = "resources/expected_updated_metadata.yaml"
 
 
 def test_metadata_generation():
@@ -73,7 +71,10 @@ def test_metadata_generation():
 
     # Check when files are added
     file = metadata.new_file(
-        path="vis.ms", description="raw visibilities", crc="3421780262"
+        dp_path="vis.ms",
+        metadata_file_path=f"{data_product_path}/{METADATA_FILENAME}",
+        description="raw visibilities",
+        crc="3421780262",
     )
     metadata_with_files = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     assert metadata_with_files == read_file(OUTPUT_METADATA_WITH_FILES)
@@ -167,12 +168,12 @@ def test_with_duplicate_file_path():
 
     # Check when files are added
     path = "vis.ms"
-    metadata.new_file(path=path, description="raw visibilities")
+    metadata.new_file(dp_path=path, description="raw visibilities")
 
     with pytest.raises(
         ValueError, match=r"File with same path already exists!"
     ):
-        metadata.new_file(path=path, description="raw visibilities")
+        metadata.new_file(dp_path=path, description="raw visibilities")
 
 
 def test_write_obscore_attributes():

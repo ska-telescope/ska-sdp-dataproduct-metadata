@@ -167,11 +167,15 @@ class MetaData:
         config_data.image = script["image"].split(":", 1)[0]
         config_data.version = pb_script["version"]
 
-    def new_file(self, path=None, description=None, crc=None):
+    def new_file(
+        self, dp_path=None, metadata_file_path=None, description=None, crc=None
+    ):
         """
         Creates a new file into the metadata and add current file status.
 
-        :param path: file name of the data product
+        :param dp_path: file name of the data product
+        :param metadata_file_path: full path of the metadata file
+                        (Not to be confused of path of the data product)
         :param description: Description of the file
         :param crc: CRC (Cyclic Redundancy Check) checksum for the file.
             NB: CRC is supplied, not calculated
@@ -179,24 +183,24 @@ class MetaData:
         :returns: instance of the File class
         """
 
-        path = os.path.normpath(path)
+        dp_path = os.path.normpath(dp_path)
         for file in self._data.files:
-            if path in file.path:
+            if dp_path in file.path:
                 raise ValueError("File with same path already exists!")
 
         add_to_file = [
             {
                 "crc": crc,
                 "description": description,
-                "path": path,
+                "path": dp_path,
                 "status": "working",
             }
         ]
         self._data.files.extend(add_to_file)
-        self.write()
+        self.write(path=metadata_file_path)
 
         # Instance of the class to represent the file
-        file = File(self, path)
+        file = File(self, dp_path)
         return file
 
     def read(self, file):
