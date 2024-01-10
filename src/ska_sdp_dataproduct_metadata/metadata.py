@@ -175,7 +175,7 @@ class MetaData:
 
         :param dp_path: file name of the data product
         :param metadata_file_path: full path of the metadata file
-                        (Not to be confused of path of the data product)
+                        (Not to be confused with path of the data product)
         :param description: Description of the file
         :param crc: CRC (Cyclic Redundancy Check) checksum for the file.
             NB: CRC is supplied, not calculated
