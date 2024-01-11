@@ -179,7 +179,8 @@ class MetaData:
         """
         Creates a new file into the metadata and add current file status.
 
-        :param dp_path: file name of the data product
+        :param dp_path: path of the data product
+                Not to be confused with path of the metadata file
         :param description: Description of the file
         :param crc: CRC (Cyclic Redundancy Check) checksum for the file.
             NB: CRC is supplied, not calculated
@@ -229,11 +230,10 @@ class MetaData:
             raise MetaData.ValidationError(
                 "Error(s) occurred during validation.", validation_errors
             )
-
+        # Only use defaut if self._output_path is None
         output_path = self._output_path or self.runtime_abspath(
             METADATA_FILENAME
         )
-        print(output_path)
         # Check if directories exist, if not create
         parent_dir = os.path.dirname(output_path)
         if not os.path.exists(parent_dir):
