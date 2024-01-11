@@ -82,18 +82,13 @@ class MetaData:
         """
         return os.path.normpath(f"{self._root}/{self._prefix}/{path}")
 
-    def load_processing_block(
-        self, pb_id=None, mount_path=None, output_filaname=None
-    ):
+    def load_processing_block(self, pb_id=None, mount_path=None):
         """
         Configure a MetaData object based on the data in a processing block
         and update the path with the procesing block ID
 
         :param pb_id: processing block ID
         :type mount_path: path where the data product volume is mounted.
-        :type output_filename: path of the output metadata filename,
-              without the parent directory path
-              If None, use default METADATA_FILENAME
         """
 
         # Get connection to config DB
@@ -142,9 +137,9 @@ class MetaData:
         # Construct the path to write metadata
         self._root = mount_path or "/"
         self._prefix = f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
-        # determine path of output file
-        metadata_filename = output_filaname or METADATA_FILENAME
-        self._output_path = self.runtime_abspath(metadata_filename)
+        # determine again path of output file if None
+        if self._output_path is None:
+            self._output_path = self.runtime_abspath(METADATA_FILENAME)
 
     def set_execution_block_id(self, execution_block_id):
         """
