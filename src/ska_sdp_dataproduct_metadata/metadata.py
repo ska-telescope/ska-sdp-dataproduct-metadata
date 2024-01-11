@@ -68,6 +68,15 @@ class MetaData:
         self._eb_id = None
         self._root = "/"
         self._prefix = ""
+        self._output_path = None
+
+    @property
+    def output_path(self):
+        return self._output_path
+
+    @output_path.setter
+    def output_path(self, output_path):
+        self._output_path = self.runtime_abspath(output_path)
 
     def load_processing_block(self, pb_id=None, mount_path=None):
         """
@@ -260,17 +269,11 @@ class File:
     def __init__(self, metadata, path):
         self._path = path
         self._metadata = metadata
-        self._metadata_file_path = metadata.runtime_abspath(METADATA_FILENAME)
 
     @property
     def full_path(self):
         """Get the full path object."""
         return self._metadata.runtime_abspath(self._path)
-
-    @property
-    def metadata_file_path(self):
-        """Get the metadata file path object."""
-        return self._metadata_file_path
 
     def update_status(self, status):
         """
@@ -279,10 +282,7 @@ class File:
         :param: status: status to be updated to
 
         """
-
-        # read metadata yaml
-        metadata = MetaData(self._metadata_file_path)
-        data = metadata.get_data()
+        data = self._metadata.get_data()
 
         # Update File
         for file in data.files:
@@ -290,4 +290,4 @@ class File:
                 file.status = status
 
         # Write YAML file
-        metadata.write(self._metadata_file_path)
+        self._metadata.write(self._metadata.output_path)
