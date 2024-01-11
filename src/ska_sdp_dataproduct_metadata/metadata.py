@@ -22,6 +22,7 @@ METADATA_FILENAME = os.environ.get(
 METADATA_SCHEMA = "metadata.json"
 
 
+# pylint:disable=too-many-instance-attributes
 class MetaData:
     """
     Class for generating the metadata file
@@ -49,32 +50,48 @@ class MetaData:
             super().__init__(message)
             self.errors = errors
 
-    def __init__(self, path=None):
-
-        # determine template filename
+    def __init__(self, template_path=None):
+        # determine default template filename
         metadata_template_path = os.path.join(
             os.path.dirname(__file__), "template", METADATA_TEMPLATE
         )
 
-        # if no path specified, use metadata template
-        path = path or metadata_template_path
+        # if no path specified (called first time),
+        # use metadata template to create one
+        # this is not necessarily the output path
+        path = template_path or metadata_template_path
 
         # read data from yaml
         self._data = self.read(path)
-
         self._config = None
         self._pb_id = None
         self._pb = None
         self._eb_id = None
         self._root = "/"
         self._prefix = ""
+        self._output_path = ""
 
-    def load_processing_block(self, pb_id=None, mount_path=None):
+    def runtime_abspath(self, path):
+        """
+        The absolute path of `path` relative to the standard prefix. This value
+        is valid at runtime; i.e., it maps to the filesystem in use.
+
+        :param path: A path relative to the standard prefix.
+        """
+        return os.path.normpath(f"{self._root}/{self._prefix}/{path}")
+
+    def load_processing_block(
+        self, pb_id=None, mount_path=None, output_filaname=None
+    ):
         """
         Configure a MetaData object based on the data in a processing block
+        and update the path with the procesing block ID
 
         :param pb_id: processing block ID
         :type mount_path: path where the data product volume is mounted.
+        :type output_filename: path of the output metadata filename,
+              without the parent directory path
+              If None, use default METADATA_FILENAME
         """
 
         # Get connection to config DB
@@ -123,15 +140,9 @@ class MetaData:
         # Construct the path to write metadata
         self._root = mount_path or "/"
         self._prefix = f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
-
-    def runtime_abspath(self, path):
-        """
-        The absolute path of `path` relative to the standard prefix. This value
-        is valid at runtime; i.e., it maps to the filesystem in use.
-
-        :param path: A path relative to the standard prefix.
-        """
-        return os.path.normpath(f"{self._root}/{self._prefix}/{path}")
+        # determine path of output file
+        metadata_filename = output_filaname or METADATA_FILENAME
+        self._output_path = self.runtime_abspath(metadata_filename)
 
     def set_execution_block_id(self, execution_block_id):
         """
@@ -167,15 +178,11 @@ class MetaData:
         config_data.image = script["image"].split(":", 1)[0]
         config_data.version = pb_script["version"]
 
-    def new_file(
-        self, dp_path=None, metadata_file_path=None, description=None, crc=None
-    ):
+    def new_file(self, dp_path=None, description=None, crc=None):
         """
         Creates a new file into the metadata and add current file status.
 
         :param dp_path: file name of the data product
-        :param metadata_file_path: full path of the metadata file
-                        (Not to be confused with path of the data product)
         :param description: Description of the file
         :param crc: CRC (Cyclic Redundancy Check) checksum for the file.
             NB: CRC is supplied, not calculated
@@ -197,10 +204,11 @@ class MetaData:
             }
         ]
         self._data.files.extend(add_to_file)
-        self.write(path=metadata_file_path)
+        # Write to output metadata
+        self.write()
 
         # Instance of the class to represent the file
-        file = File(self, dp_path, metadata_file_path=metadata_file_path)
+        file = File(self, dp_path)
         return file
 
     def read(self, file):
@@ -213,11 +221,9 @@ class MetaData:
         """
         return benedict(file, format="yaml")
 
-    def write(self, path=None):
+    def write(self):
         """
         Write the metadata to a yaml file.
-
-        :param path: output metadata file
         """
 
         # validate the data before writing
@@ -227,16 +233,13 @@ class MetaData:
                 "Error(s) occurred during validation.", validation_errors
             )
 
-        # determine path
-        metadata_file_path = path or self.runtime_abspath(METADATA_FILENAME)
-
         # Check if directories exist, if not create
-        parent_dir = os.path.dirname(metadata_file_path)
+        parent_dir = os.path.dirname(self._output_path)
         if not os.path.exists(parent_dir):
             os.makedirs(parent_dir)
 
         # Write YAML file
-        with open(metadata_file_path, "w", encoding="utf8") as out_file:
+        with open(self._output_path, "w", encoding="utf8") as out_file:
             out_file.write(self._data.to_yaml())
 
     def validate(self) -> list:
@@ -261,12 +264,12 @@ class MetaData:
 class File:
     """Class to represent the file in the metadata."""
 
-    def __init__(self, metadata, path, metadata_file_path=None):
+    def __init__(self, metadata, path):
         self._path = path
         self._metadata = metadata
-        # if no path specified, use default
         self._metadata_file_path = (
-            metadata_file_path or metadata.runtime_abspath(METADATA_FILENAME)
+            metadata._output_path
+            or metadata.runtime_abspath(METADATA_FILENAME)
         )
 
     @property
@@ -284,12 +287,9 @@ class File:
         Update the current file status.
 
         :param: status: status to be updated to
-
         """
-
         # read metadata yaml
-        metadata = MetaData(self._metadata_file_path)
-        data = metadata.get_data()
+        data = self._metadata.get_data()
 
         # Update File
         for file in data.files:
@@ -297,4 +297,4 @@ class File:
                 file.status = status
 
         # Write YAML file
-        metadata.write(self._metadata_file_path)
+        self._metadata.write()

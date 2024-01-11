@@ -201,13 +201,14 @@ def test_custom_metadata_filename():
     new_metadata_filename = "added_files.yaml"
 
     metadata = MetaData()
-    metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
-    metadata.write(path=f"{data_product_path}/{new_metadata_filename}")
+    metadata.load_processing_block(
+        pb_id, mount_path=MOUNT_PATH, output_filaname=new_metadata_filename
+    )
+    metadata.write()
 
     # Check when files are added
     file = metadata.new_file(
         dp_path="vis.ms",
-        metadata_file_path=f"{data_product_path}/{new_metadata_filename}",
         description="raw visibilities",
         crc="3421780262",
     )
@@ -251,7 +252,7 @@ def test_write_obscore_attributes():
     data.obscore.instrument_name = ObsCore.SKA_LOW
 
     # write output
-    metadata.write(f"{data_product_path}/{METADATA_FILENAME}")
+    metadata.write()
 
     generated_metadata = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     expected_metadata = read_file(OUTPUT_METADATA_OBSCORE_WITHOUT_FILES)
