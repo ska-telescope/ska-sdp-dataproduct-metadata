@@ -50,7 +50,7 @@ class MetaData:
             super().__init__(message)
             self.errors = errors
 
-    def __init__(self, template_path=None):
+    def __init__(self, template_path=None, output_path=None):
         # determine default template filename
         metadata_template_path = os.path.join(
             os.path.dirname(__file__), "template", METADATA_TEMPLATE
@@ -69,7 +69,9 @@ class MetaData:
         self._eb_id = None
         self._root = "/"
         self._prefix = ""
-        self._output_path = ""
+        # Output path of metadata file
+        # Set to None if not provided
+        self._output_path = output_path
 
     def runtime_abspath(self, path):
         """
@@ -233,13 +235,17 @@ class MetaData:
                 "Error(s) occurred during validation.", validation_errors
             )
 
+        output_path = self._output_path or self.runtime_abspath(
+            METADATA_FILENAME
+        )
+        print(output_path)
         # Check if directories exist, if not create
-        parent_dir = os.path.dirname(self._output_path)
+        parent_dir = os.path.dirname(output_path)
         if not os.path.exists(parent_dir):
             os.makedirs(parent_dir)
 
         # Write YAML file
-        with open(self._output_path, "w", encoding="utf8") as out_file:
+        with open(output_path, "w", encoding="utf8") as out_file:
             out_file.write(self._data.to_yaml())
 
     def validate(self) -> list:
