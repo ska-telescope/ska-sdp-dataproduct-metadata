@@ -99,7 +99,6 @@ class MetaData:
     def load_processing_block(self, pb_id=None, mount_path=None):
         """
         Configure a MetaData object based on the data in a processing block
-        and update the path with the processing block ID
 
         :param pb_id: processing block ID
         :type mount_path: path where the data product volume is mounted.
@@ -245,7 +244,7 @@ class MetaData:
         output_path = self.output_path or self.runtime_abspath(
             METADATA_FILENAME
         )
-        print(self.output_path, output_path)
+
         # Check if directories exist, if not create
         parent_dir = os.path.dirname(output_path)
         if not os.path.exists(parent_dir):
