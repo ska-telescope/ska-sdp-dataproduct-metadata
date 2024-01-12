@@ -200,9 +200,8 @@ def test_custom_metadata_filename():
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
     new_metadata_filename = "added_files.yaml"
 
-    metadata = MetaData(
-        output_path=f"{data_product_path}/{new_metadata_filename}"
-    )
+    metadata = MetaData()
+    metadata.output_path = f"{data_product_path}/{new_metadata_filename}"
     metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
     metadata.write()
 
@@ -241,7 +240,8 @@ def test_write_obscore_attributes():
     # create the dataproduct path
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
 
-    metadata = MetaData(output_path=f"{data_product_path}/{METADATA_FILENAME}")
+    metadata = MetaData()
+    metadata.output_path = f"{data_product_path}/{METADATA_FILENAME}"
     metadata.set_execution_block_id(eb_id)
     data = metadata.get_data()
     data.obscore.dataproduct_type = ObsCore.DataProductType.MS

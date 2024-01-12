@@ -50,7 +50,7 @@ class MetaData:
             super().__init__(message)
             self.errors = errors
 
-    def __init__(self, template_path=None, output_path=None):
+    def __init__(self, path=None):
         # determine default template filename
         metadata_template_path = os.path.join(
             os.path.dirname(__file__), "template", METADATA_TEMPLATE
@@ -59,7 +59,7 @@ class MetaData:
         # if no path specified (called first time),
         # use metadata template to create one
         # this is not necessarily the output path
-        path = template_path or metadata_template_path
+        path = path or metadata_template_path
 
         # read data from yaml
         self._data = self.read(path)
@@ -71,7 +71,21 @@ class MetaData:
         self._prefix = ""
         # Output path of metadata file
         # Set to None if not provided
-        self._output_path = output_path
+        self._output_path = None
+
+    @property
+    def output_path(self):
+        """
+        Output metadata path
+        """
+        return self._output_path
+
+    @output_path.setter
+    def output_path(self, custom_path):
+        """
+        Set custom path for output metadata
+        """
+        self._output_path = custom_path
 
     def runtime_abspath(self, path):
         """
@@ -85,7 +99,7 @@ class MetaData:
     def load_processing_block(self, pb_id=None, mount_path=None):
         """
         Configure a MetaData object based on the data in a processing block
-        and update the path with the procesing block ID
+        and update the path with the processing block ID
 
         :param pb_id: processing block ID
         :type mount_path: path where the data product volume is mounted.
@@ -137,9 +151,6 @@ class MetaData:
         # Construct the path to write metadata
         self._root = mount_path or "/"
         self._prefix = f"/product/{self._eb_id}/ska-sdp/{self._pb_id}"
-        # determine again path of output file if None
-        if self._output_path is None:
-            self._output_path = self.runtime_abspath(METADATA_FILENAME)
 
     def set_execution_block_id(self, execution_block_id):
         """
@@ -230,10 +241,11 @@ class MetaData:
             raise MetaData.ValidationError(
                 "Error(s) occurred during validation.", validation_errors
             )
-        # Only use defaut if self._output_path is None
-        output_path = self._output_path or self.runtime_abspath(
+        # Allow writing to a custom path
+        output_path = self.output_path or self.runtime_abspath(
             METADATA_FILENAME
         )
+        print(self.output_path, output_path)
         # Check if directories exist, if not create
         parent_dir = os.path.dirname(output_path)
         if not os.path.exists(parent_dir):
@@ -268,20 +280,11 @@ class File:
     def __init__(self, metadata, path):
         self._path = path
         self._metadata = metadata
-        self._metadata_file_path = (
-            metadata._output_path
-            or metadata.runtime_abspath(METADATA_FILENAME)
-        )
 
     @property
     def full_path(self):
         """Get the full path object."""
         return self._metadata.runtime_abspath(self._path)
-
-    @property
-    def metadata_file_path(self):
-        """Get the metadata file path object."""
-        return self._metadata_file_path
 
     def update_status(self, status):
         """
