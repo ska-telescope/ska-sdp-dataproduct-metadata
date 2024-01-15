@@ -7,11 +7,11 @@ Below shows the contents of the metadata and brief description about them:
 - ``execution_block``: Identifies the observation
 - ``context``:  This contains free-form data provided by OET. The data is meant to be passed verbatim through from OET/TMC as part of AssignResources (SDP) or Configure (other sub-systems). Currently this is just a placeholder.
 - ``config``: This is the configuration used for executing the processing script
-- ``files``: This contains a list of MS files which have been generated.
+- ``files``: This contains a list of data products (typically MS or HDF files) which have been generated.
 
     - ``crc``: A cyclic redundancy check (CRC) generated from the contents of the file and used to detect errors in the data
     - ``description``: Useful details about the file
-    - ``path``: Path where the MS is located
+    - ``path``: Path where the data product file is located
     - ``size``: Size of the file (in KB)
     - ``status``: Indicate current file status
 

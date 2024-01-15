@@ -46,10 +46,8 @@ def test_metadata_generation():
     for txn in CONFIG_DB_CLIENT.txn():
         pb_list = txn.list_processing_blocks()
         pb_id = pb_list[0]
-
-    # Processing Block
-    for txn in CONFIG_DB_CLIENT.txn():
         processing_block = txn.get_processing_block(pb_id)
+
     eb_id = processing_block.eb_id
 
     # Creating a fake deployment
@@ -73,7 +71,9 @@ def test_metadata_generation():
 
     # Check when files are added
     file = metadata.new_file(
-        path="vis.ms", description="raw visibilities", crc="3421780262"
+        dp_path="vis.ms",
+        description="raw visibilities",
+        crc="3421780262",
     )
     metadata_with_files = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     assert metadata_with_files == read_file(OUTPUT_METADATA_WITH_FILES)
@@ -150,10 +150,8 @@ def test_with_duplicate_file_path():
     for txn in CONFIG_DB_CLIENT.txn():
         pb_list = txn.list_processing_blocks()
         pb_id = pb_list[0]
-
-    # Processing Block
-    for txn in CONFIG_DB_CLIENT.txn():
         processing_block = txn.get_processing_block(pb_id)
+
     eb_id = processing_block.eb_id
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
@@ -167,12 +165,59 @@ def test_with_duplicate_file_path():
 
     # Check when files are added
     path = "vis.ms"
-    metadata.new_file(path=path, description="raw visibilities")
+    metadata.new_file(dp_path=path, description="raw visibilities")
 
     with pytest.raises(
         ValueError, match=r"File with same path already exists!"
     ):
-        metadata.new_file(path=path, description="raw visibilities")
+        metadata.new_file(dp_path=path, description="raw visibilities")
+
+
+def test_custom_metadata_filename():
+    """
+    Check if the yaml file is updated with a custom name of metadata file
+    """
+    # Wipe config db and directories
+    clean_up(f"{MOUNT_PATH}/product")
+
+    # Create eb and pb
+    create_eb_pb()
+
+    # Get processing block iD
+    for txn in CONFIG_DB_CLIENT.txn():
+        pb_list = txn.list_processing_blocks()
+        pb_id = pb_list[0]
+        processing_block = txn.get_processing_block(pb_id)
+
+    eb_id = processing_block.eb_id
+
+    data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
+    new_metadata_filename = "added_files.yaml"
+
+    metadata = MetaData()
+    metadata.output_path = f"{data_product_path}/{new_metadata_filename}"
+    metadata.load_processing_block(pb_id, mount_path=MOUNT_PATH)
+    metadata.write()
+
+    # Check when files are added
+    file = metadata.new_file(
+        dp_path="vis.ms",
+        description="raw visibilities",
+        crc="3421780262",
+    )
+    metadata_with_files = read_file(
+        f"{data_product_path}/{new_metadata_filename}"
+    )
+    # Expected metadata has files=[] attribute populated
+    # With path etc. of files
+    assert metadata_with_files == read_file(OUTPUT_METADATA_WITH_FILES)
+
+    # Check with status has been updated
+    file.update_status("done")
+    updated_status_files_metadata = read_file(
+        f"{data_product_path}/{new_metadata_filename}"
+    )
+    assert updated_status_files_metadata == read_file(UPDATED_METADATA)
 
 
 def test_write_obscore_attributes():
@@ -192,6 +237,7 @@ def test_write_obscore_attributes():
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
 
     metadata = MetaData()
+    metadata.output_path = f"{data_product_path}/{METADATA_FILENAME}"
     metadata.set_execution_block_id(eb_id)
     data = metadata.get_data()
     data.obscore.dataproduct_type = ObsCore.DataProductType.MS
@@ -202,7 +248,7 @@ def test_write_obscore_attributes():
     data.obscore.instrument_name = ObsCore.SKA_LOW
 
     # write output
-    metadata.write(f"{data_product_path}/{METADATA_FILENAME}")
+    metadata.write()
 
     generated_metadata = read_file(f"{data_product_path}/{METADATA_FILENAME}")
     expected_metadata = read_file(OUTPUT_METADATA_OBSCORE_WITHOUT_FILES)
