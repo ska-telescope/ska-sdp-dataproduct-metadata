@@ -46,10 +46,8 @@ def test_metadata_generation():
     for txn in CONFIG_DB_CLIENT.txn():
         pb_list = txn.list_processing_blocks()
         pb_id = pb_list[0]
-
-    # Processing Block
-    for txn in CONFIG_DB_CLIENT.txn():
         processing_block = txn.get_processing_block(pb_id)
+
     eb_id = processing_block.eb_id
 
     # Creating a fake deployment
@@ -152,10 +150,8 @@ def test_with_duplicate_file_path():
     for txn in CONFIG_DB_CLIENT.txn():
         pb_list = txn.list_processing_blocks()
         pb_id = pb_list[0]
-
-    # Processing Block
-    for txn in CONFIG_DB_CLIENT.txn():
         processing_block = txn.get_processing_block(pb_id)
+
     eb_id = processing_block.eb_id
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
@@ -191,10 +187,8 @@ def test_custom_metadata_filename():
     for txn in CONFIG_DB_CLIENT.txn():
         pb_list = txn.list_processing_blocks()
         pb_id = pb_list[0]
-
-    # Processing Block
-    for txn in CONFIG_DB_CLIENT.txn():
         processing_block = txn.get_processing_block(pb_id)
+
     eb_id = processing_block.eb_id
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
@@ -214,6 +208,8 @@ def test_custom_metadata_filename():
     metadata_with_files = read_file(
         f"{data_product_path}/{new_metadata_filename}"
     )
+    # Expected metadata has files=[] attribute populated
+    # With path etc. of files
     assert metadata_with_files == read_file(OUTPUT_METADATA_WITH_FILES)
 
     # Check with status has been updated
