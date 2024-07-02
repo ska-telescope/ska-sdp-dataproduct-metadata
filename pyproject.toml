@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska-sdp-dataproduct-metadata"
-version = "0.5.0"
+version = "0.5.1"
 description = "SKA SDP Data Product Metadata"
 authors = ["SKA SDP Developers"]
 repository = "https://gitlab.com/ska-telescope/sdp/ska-sdp-dataproduct-metadata"
