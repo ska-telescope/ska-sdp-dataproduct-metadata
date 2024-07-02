@@ -57,7 +57,7 @@ def test_metadata_generation():
         "chart": "artefact.skao.int/ska-sdp-script-vis-receive",
         "values": {},
     }
-    deploy = ska_sdp_config.Deployment(deploy_id, "helm", chart)
+    deploy = ska_sdp_config.Deployment(key=deploy_id, kind="helm", args=chart)
 
     for txn in CONFIG_DB_CLIENT.txn():
         txn.deployment.create(deploy)
@@ -125,7 +125,7 @@ def test_no_script():
     # Get processing block iD
     for txn in CONFIG_DB_CLIENT.txn():
         # Deleting script to test
-        key = ska_sdp_config.Script.Key(
+        key = ska_sdp_config.entity.Script.Key(
             kind="realtime", name="vis-receive", version="0.6.0"
         )
         txn.script.delete(key)
@@ -302,13 +302,15 @@ def create_eb_pb():
                 "image": f"{image}-{pb_script['name']}:"
                 f"{pb_script['version']}"
             }
-            script_key = ska_sdp_config.Script.Key(
+            script_key = ska_sdp_config.entity.Script.Key(
                 kind=pb_script["kind"],
                 name=pb_script["name"],
                 version=pb_script["version"],
             )
 
-            script = ska_sdp_config.Script(key=script_key, **script_image)
+            script = ska_sdp_config.entity.Script(
+                key=script_key, **script_image
+            )
             txn.script.create(script)
 
 
@@ -346,9 +348,9 @@ def get_eb_pbs():
         else:
             dependencies = []
         processing_block = ska_sdp_config.ProcessingBlock(
-            pb_id,
-            eb_id,
-            pb_from_config.get("script"),
+            key=pb_id,
+            eb_id=eb_id,
+            script=pb_from_config.get("script"),
             parameters=pb_from_config.get("parameters"),
             dependencies=dependencies,
         )
