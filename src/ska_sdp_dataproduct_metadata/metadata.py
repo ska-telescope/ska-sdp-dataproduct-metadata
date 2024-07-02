@@ -183,9 +183,9 @@ class MetaData:
 
         config_data = self._data.config
         config_data.processing_block = self._pb_id
-        config_data.processing_script = pb_script["name"]
-        config_data.image = script["image"].split(":", 1)[0]
-        config_data.version = pb_script["version"]
+        config_data.processing_script = pb_script.name
+        config_data.image = script.image.split(":", 1)[0]
+        config_data.version = pb_script.version
 
     def new_file(self, dp_path=None, description=None, crc=None):
         """
