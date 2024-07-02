@@ -134,9 +134,9 @@ class MetaData:
 
             # Get script from processing block
             script_key = ska_sdp_config.entity.Script.Key(
-                kind=self._pb.script["kind"],
-                name=self._pb.script["name"],
-                version=self._pb.script["version"],
+                kind=self._pb.script.kind,
+                name=self._pb.script.name,
+                version=self._pb.script.version,
             )
             script = txn.script.get(script_key)
             if script is None:

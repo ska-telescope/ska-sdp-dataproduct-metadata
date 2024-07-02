@@ -291,7 +291,7 @@ def create_eb_pb():
     for txn in CONFIG_DB_CLIENT.txn():
         eb_id = execution_block.get("eb_id")
         if eb_id is not None:
-            txn.execution_block(eb_id).update(execution_block)
+            txn.execution_block(eb_id).create(execution_block)
         for processing_block in processing_blocks:
             txn.processing_block.create(processing_block)
 
@@ -299,13 +299,12 @@ def create_eb_pb():
             pb_script = processing_block.script
             image = "artefact.skao.int/ska-sdp-script"
             script_image = {
-                "image": f"{image}-{pb_script['name']}:"
-                f"{pb_script['version']}"
+                "image": f"{image}-{pb_script.name}:{pb_script.version}"
             }
             script_key = ska_sdp_config.entity.Script.Key(
-                kind=pb_script["kind"],
-                name=pb_script["name"],
-                version=pb_script["version"],
+                kind=pb_script.kind,
+                name=pb_script.name,
+                version=pb_script.version,
             )
 
             script = ska_sdp_config.entity.Script(
