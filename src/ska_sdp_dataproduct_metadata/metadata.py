@@ -5,6 +5,7 @@ import logging
 import os
 
 import jsonschema
+import ska_sdp_config
 import ska_ser_logging
 from benedict import benedict
 
@@ -119,7 +120,7 @@ class MetaData:
         self._pb = None
         self._eb_id = None
         for txn in self._config.txn():
-            self._pb = txn.get_processing_block(self._pb_id)
+            self._pb = txn.processing_block.get(self._pb_id)
 
             if self._pb is None:
                 raise ValueError("Processing Block is None!")
@@ -128,15 +129,16 @@ class MetaData:
             LOG.info("Execution Block ID %s", self._eb_id)
 
             if self._eb_id:
-                execution_block = txn.get_execution_block(self._eb_id)
+                execution_block = txn.execution_block(self._eb_id).get()
                 self._data.execution_block = self._eb_id
 
             # Get script from processing block
-            script = txn.get_script(
-                self._pb.script["kind"],
-                self._pb.script["name"],
-                self._pb.script["version"],
+            script_key = ska_sdp_config.entity.Script.Key(
+                kind=self._pb.script.kind,
+                name=self._pb.script.name,
+                version=self._pb.script.version,
             )
+            script = txn.script.get(script_key)
             if script is None:
                 raise ValueError("Script is None!")
 
@@ -181,9 +183,9 @@ class MetaData:
 
         config_data = self._data.config
         config_data.processing_block = self._pb_id
-        config_data.processing_script = pb_script["name"]
-        config_data.image = script["image"].split(":", 1)[0]
-        config_data.version = pb_script["version"]
+        config_data.processing_script = pb_script.name
+        config_data.image = script.image.split(":", 1)[0]
+        config_data.version = pb_script.version
 
     def new_file(self, dp_path=None, description=None, crc=None):
         """

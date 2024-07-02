@@ -44,9 +44,9 @@ def test_metadata_generation():
 
     # Get processing block iD
     for txn in CONFIG_DB_CLIENT.txn():
-        pb_list = txn.list_processing_blocks()
+        pb_list = txn.processing_block.list_keys()
         pb_id = pb_list[0]
-        processing_block = txn.get_processing_block(pb_id)
+        processing_block = txn.processing_block.get(pb_id)
 
     eb_id = processing_block.eb_id
 
@@ -57,10 +57,10 @@ def test_metadata_generation():
         "chart": "artefact.skao.int/ska-sdp-script-vis-receive",
         "values": {},
     }
-    deploy = ska_sdp_config.Deployment(deploy_id, "helm", chart)
+    deploy = ska_sdp_config.Deployment(key=deploy_id, kind="helm", args=chart)
 
     for txn in CONFIG_DB_CLIENT.txn():
-        txn.create_deployment(deploy)
+        txn.deployment.create(deploy)
 
     data_product_path = f"{MOUNT_PATH}/product/{eb_id}/ska-sdp/{pb_id}"
     metadata = MetaData()
@@ -125,8 +125,12 @@ def test_no_script():
     # Get processing block iD
     for txn in CONFIG_DB_CLIENT.txn():
         # Deleting script to test
-        txn.delete_script("realtime", "vis-receive", "0.6.0")
-        pb_list = txn.list_processing_blocks()
+        key = ska_sdp_config.entity.Script.Key(
+            kind="realtime", name="vis-receive", version="0.6.0"
+        )
+        txn.script.delete(key)
+
+        pb_list = txn.processing_block.list_keys()
         pb_id = pb_list[0]
 
     with pytest.raises(ValueError, match=r"Script is None!"):
@@ -148,9 +152,9 @@ def test_with_duplicate_file_path():
 
     # Get processing block iD
     for txn in CONFIG_DB_CLIENT.txn():
-        pb_list = txn.list_processing_blocks()
+        pb_list = txn.processing_block.list_keys()
         pb_id = pb_list[0]
-        processing_block = txn.get_processing_block(pb_id)
+        processing_block = txn.processing_block.get(pb_id)
 
     eb_id = processing_block.eb_id
 
@@ -185,9 +189,9 @@ def test_custom_metadata_filename():
 
     # Get processing block iD
     for txn in CONFIG_DB_CLIENT.txn():
-        pb_list = txn.list_processing_blocks()
+        pb_list = txn.processing_block.list_keys()
         pb_id = pb_list[0]
-        processing_block = txn.get_processing_block(pb_id)
+        processing_block = txn.processing_block.get(pb_id)
 
     eb_id = processing_block.eb_id
 
@@ -287,23 +291,26 @@ def create_eb_pb():
     for txn in CONFIG_DB_CLIENT.txn():
         eb_id = execution_block.get("eb_id")
         if eb_id is not None:
-            txn.create_execution_block(eb_id, execution_block)
+            txn.execution_block(eb_id).create(execution_block)
         for processing_block in processing_blocks:
-            txn.create_processing_block(processing_block)
+            txn.processing_block.create(processing_block)
 
             # Create script
             pb_script = processing_block.script
-            script_image = "artefact.skao.int/ska-sdp-script-"
-            script = {
-                "image": f"{script_image}{pb_script['name']}:"
-                f"{pb_script['version']}"
+            image = "artefact.skao.int/ska-sdp-script"
+            script_image = {
+                "image": f"{image}-{pb_script.name}:{pb_script.version}"
             }
-            txn.create_script(
-                pb_script["kind"],
-                pb_script["name"],
-                pb_script["version"],
-                script,
+            script_key = ska_sdp_config.entity.Script.Key(
+                kind=pb_script.kind,
+                name=pb_script.name,
+                version=pb_script.version,
             )
+
+            script = ska_sdp_config.entity.Script(
+                key=script_key, **script_image
+            )
+            txn.script.create(script)
 
 
 def read_configuration_string():
@@ -340,9 +347,9 @@ def get_eb_pbs():
         else:
             dependencies = []
         processing_block = ska_sdp_config.ProcessingBlock(
-            pb_id,
-            eb_id,
-            pb_from_config.get("script"),
+            key=pb_id,
+            eb_id=eb_id,
+            script=pb_from_config.get("script"),
             parameters=pb_from_config.get("parameters"),
             dependencies=dependencies,
         )
