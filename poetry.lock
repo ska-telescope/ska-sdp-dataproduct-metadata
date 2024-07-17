@@ -1364,13 +1364,13 @@ files = [
 
 [[package]]
 name = "ska-sdp-config"
-version = "0.7.0+dev.c4a01eeb6"
+version = "0.7.0+dev.c388f357b"
 description = "SKA SDP Configuration Library"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "ska_sdp_config-0.7.0+dev.c4a01eeb6-py3-none-any.whl", hash = "sha256:3788f051648d9ea6ba060c68cabbc7dc684def5b93973cbf76aeeac49cea4011"},
-    {file = "ska_sdp_config-0.7.0+dev.c4a01eeb6.tar.gz", hash = "sha256:75fa2310d8db8a7e93a3f0ebe81f4b5b206188e79e6e52b1f955c95045864b65"},
+    {file = "ska_sdp_config-0.7.0+dev.c388f357b-py3-none-any.whl", hash = "sha256:001a4304556983ec6709099a6da0f9ed21b1b90de9f5bb8c782c092a5ac8578c"},
+    {file = "ska_sdp_config-0.7.0+dev.c388f357b.tar.gz", hash = "sha256:4b49354f5f09703ad4a0c6d5258468431285b73f337acf21c26df2d459552154"},
 ]
 
 [package.dependencies]
@@ -1734,4 +1734,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "de76141c31ef8880e6cd3a8b5efb15572bbcf52e4cd128d79a10fd90923fcee3"
+content-hash = "ee1555be21fcc694803a9905904ac7e3107ba853755f62693df8f74de24aafac"
