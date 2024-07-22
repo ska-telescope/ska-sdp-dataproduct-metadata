@@ -353,10 +353,10 @@ def get_eb_pbs():
     execution_block = ska_sdp_config.ExecutionBlock(
         key=eb_id,
         subarray_id=SUBARRAY_ID,
-        status="ACTIVE",
         **eb_config,
         **eb_pbs,
     )
+
 
     return execution_block, pbs_config_list
 
