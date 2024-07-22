@@ -357,7 +357,6 @@ def get_eb_pbs():
         **eb_pbs,
     )
 
-
     return execution_block, pbs_config_list
 
 
