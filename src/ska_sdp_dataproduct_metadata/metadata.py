@@ -129,7 +129,7 @@ class MetaData:
             LOG.info("Execution Block ID %s", self._eb_id)
 
             if self._eb_id:
-                execution_block = txn.execution_block(self._eb_id).get()
+                execution_block = txn.execution_block.get(self._eb_id)
                 self._data.execution_block = self._eb_id
 
             # Get script from processing block
@@ -144,7 +144,7 @@ class MetaData:
 
         # Update context
         if self._eb_id:
-            self._data.context = execution_block["context"]
+            self._data.context = execution_block.context
 
         # Update config
         self.set_config(script)

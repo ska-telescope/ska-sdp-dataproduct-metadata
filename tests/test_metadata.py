@@ -289,9 +289,9 @@ def create_eb_pb():
     """Create execution block and processing block."""
     execution_block, processing_blocks = get_eb_pbs()
     for txn in CONFIG_DB_CLIENT.txn():
-        eb_id = execution_block.get("eb_id")
+        eb_id = execution_block.key
         if eb_id is not None:
-            txn.execution_block(eb_id).create(execution_block)
+            txn.execution_block.create(execution_block)
         for processing_block in processing_blocks:
             txn.processing_block.create(processing_block)
 
@@ -326,22 +326,17 @@ def get_eb_pbs():
     eb_id = config.get("eb_id")
 
     eb_config = config.copy()
-    eb_extra = {
-        "subarray_id": SUBARRAY_ID,
-        "pb_realtime": [],
+
+    eb_pbs = {
         "pb_batch": [],
-        "pb_receive_addresses": None,
-        "current_scan_type": None,
-        "scan_id": None,
-        "status": "ACTIVE",
+        "pb_realtime": [],
     }
-    execution_block = {**eb_extra, **eb_config}
 
     pbs_config_list = []
     for pb_from_config in pbs_from_config:
         pb_id = pb_from_config.get("pb_id")
         kind = pb_from_config.get("script").get("kind")
-        execution_block["pb_" + kind].append(pb_id)
+        eb_pbs["pb_" + kind].append(pb_id)
         if "dependencies" in pb_from_config:
             dependencies = pb_from_config.get("dependencies")
         else:
@@ -354,6 +349,13 @@ def get_eb_pbs():
             dependencies=dependencies,
         )
         pbs_config_list.append(processing_block)
+
+    execution_block = ska_sdp_config.ExecutionBlock(
+        key=eb_id,
+        subarray_id=SUBARRAY_ID,
+        **eb_config,
+        **eb_pbs,
+    )
 
     return execution_block, pbs_config_list
 
