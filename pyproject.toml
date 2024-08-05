@@ -20,7 +20,7 @@ priority = "primary"
 [tool.poetry.dependencies]
 python = "^3.10"
 ska-ser-logging = "^0.4.3"
-ska-sdp-config = "^0.8.0"
+ska-sdp-config = "~0.8.0"
 python-benedict = "^0.33.2"
 jsonschema = "^4.22"
 
