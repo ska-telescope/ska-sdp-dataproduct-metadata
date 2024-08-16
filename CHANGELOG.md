@@ -1,5 +1,10 @@
 # Changelog
 
+main
+----
+* Use latest version of ska-sdp-config (v0.9.0) ([MR19](https://gitlab.com/ska-telescope/sdp/ska-sdp-dataproduct-metadata/-/merge_requests/19))
+* Update for Execution Block pydantic entity ([MR18](https://gitlab.com/ska-telescope/sdp/ska-sdp-dataproduct-metadata/-/merge_requests/18))
+
 0.5.1
 ----
 * Replace deprecated methods that were recently removed from the config library([MR17](https://gitlab.com/ska-telescope/sdp/ska-sdp-dataproduct-metadata/-/merge_requests/17))
