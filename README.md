@@ -62,11 +62,10 @@ https://gitlab.com/ska-telescope/sdi/ska-cicd-makefile#keeping-up-to-date
 When new release is ready:
 
   - checkout the main branch
-  - create an issue in the [Release Management](https://jira.skatelescope.org/projects/REL/summary) project
   - Update the version number in .release, pyproject.toml, and docs/src/conf.py with
     - `make bump-patch-release`
     - `make bump-minor-release`, or
     - `make bump-major-release`
   - Manually replace main with the new version number in CHANGELOG.md
-  - create the git tag with `make create-git-tag` using the REL ticket number
+  - create the git tag with `make create-git-tag` using your working ticket number
   - push the changes using `make push-git-tag`

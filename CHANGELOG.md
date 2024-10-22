@@ -1,7 +1,7 @@
 # Changelog
 
-Dev
----
+0.7.0
+-----
 * Update ska-sdp-config to 0.10.0 ([MR21](https://gitlab.com/ska-telescope/sdp/ska-sdp-dataproduct-metadata/-/merge_requests/21))
 
 0.6.0
