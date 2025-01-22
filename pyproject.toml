@@ -9,7 +9,7 @@ license = "BSD-3-Clause"
 
 [[tool.poetry.source]]
 name = "PyPI"
-priority = "primary"
+priority = "supplemental"
 
 [[tool.poetry.source]]
 name = "skao"
@@ -20,26 +20,23 @@ priority = "primary"
 [tool.poetry.dependencies]
 python = "^3.10"
 ska-ser-logging = "^0.4.3"
-ska-sdp-config = "^0.10.0"
-python-benedict = "^0.33.2"
-jsonschema = "^4.22"
+ska-sdp-config = "^0.10.3"
+python-benedict = "^0.34"
+jsonschema = "^4.23"
 
 [tool.poetry.dev-dependencies]
+black = "^24.10"
+build = "^1.2"
+flake8 = "^7.1"
 isort = "^5.13"
-black = "^24.4"
-flake8 = "^7.0"
-pylint = "^3.1"
+pylint = "^3.3"
 pylint-junit = "^0.3"
-pytest = "^8.2"
-pytest-cov = "^5.0"
-build = "^1.1"
+pytest = "^8.3"
+pytest-cov = "^6.0"
 
 [tool.poetry.group.docs.dependencies]
-sphinx = "^7.2"
-sphinx-rtd-theme = "^2.0"
-semantic-version = "^2.10"
-m2r2 = "^0.3"
-
+ska-ser-sphinx-theme = "^0.2.1"
+sphinx = "^8.1"
 
 [build-system]
 requires = ["poetry-core"]
