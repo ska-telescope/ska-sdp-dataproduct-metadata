@@ -20,8 +20,8 @@ priority = "primary"
 [tool.poetry.dependencies]
 python = "^3.10"
 ska-ser-logging = "^0.4.3"
-ska-sdp-config = "^0.10.3"
-python-benedict = "^0.34"
+ska-sdp-config = "^1.0.0"
+python-benedict = "^0.34.1"
 jsonschema = "^4.23"
 
 [tool.poetry.dev-dependencies]
@@ -30,7 +30,7 @@ build = "^1.2"
 flake8 = "^7.1"
 isort = "^5.13"
 pylint = "^3.3"
-pylint-junit = "^0.3"
+pylint-junit = "^0.3.5"
 pytest = "^8.3"
 pytest-cov = "^6.0"
 
