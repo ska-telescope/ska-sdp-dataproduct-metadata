@@ -9,8 +9,8 @@
 project = "SDP Data Product Metadata"
 copyright = "2023-2025 SKA SDP Developers"
 author = "SKA SDP Developers"
-version = "0.7.0"
-release = "0.7.0"
+version = "1.0.0"
+release = "1.0.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

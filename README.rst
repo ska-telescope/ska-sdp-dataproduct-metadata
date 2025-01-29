@@ -78,7 +78,7 @@ When new release is ready:
   - ``make bump-minor-release``, or
   - ``make bump-major-release``
 
-- Manually replace main with the new version number in CHANGELOG.md
+- Manually replace main with the new version number in CHANGELOG.rst
 - create the git tag with ``make create-git-tag`` using your working
   ticket number
 - push the changes using ``make push-git-tag``

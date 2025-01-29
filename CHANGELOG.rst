@@ -1,8 +1,8 @@
 Changelog
 =========
 
-main
-----
+1.0.0
+-----
 
 - Updated dependencies, including ska-sdp-config 1.0.0 (see pyproject.toml in linked MR,
   `MR22 <https://gitlab.com/ska-telescope/sdp/ska-sdp-dataproduct-metadata/-/merge_requests/22>`__)
